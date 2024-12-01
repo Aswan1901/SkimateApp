@@ -14,20 +14,20 @@ export default function LoginScreen() {
     const navigation = useNavigation();
 
     return (
-        <View style={styles.container}>
+        <View style={styles.LoginContainer}>
             <ImageBackground
-                source={require('../../assets/background/pexels-ryank-20042214.jpg')}
+                source={require('../assets/background/pexels-ryank-20042214.jpg')}
                 style={styles.background}
                 imageStyle={styles.backgroundImage}
             >
-                <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+                <View contentContainerStyle={styles.container}>
                     <Text style={styles.logo}>SkiMate</Text>
 
                     <View style={styles.inputContainer}>
                         <TextInput
                             style={styles.input}
                             placeholder="Email"
-                            placeholderTextColor="#FFFFFF"
+                            placeholderTextColor="#000000"
                         />
                     </View>
 
@@ -35,12 +35,11 @@ export default function LoginScreen() {
                         <TextInput
                             style={styles.input}
                             placeholder="Mot de passe"
-                            placeholderTextColor="#FFFFFF"
+                            placeholderTextColor="#000000"
                             secureTextEntry
                         />
                     </View>
-
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity onPress={()=> navigation.navigate('dashboard')} style={styles.button}>
                         <Text style={styles.buttonText}>se connecter</Text>
                     </TouchableOpacity>
 
@@ -48,19 +47,18 @@ export default function LoginScreen() {
                         <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
                             <Text style={styles.linkText}>S'inscrire</Text>
                         </TouchableOpacity>
-
                         <TouchableOpacity>
                             <Text style={styles.linkText}>Mot de passe oublié</Text>
                         </TouchableOpacity>
                     </View>
-                </ScrollView>
+                </View>
             </ImageBackground>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
+    LoginContainer: {
         flex: 1,
     },
     background: {
@@ -69,7 +67,7 @@ const styles = StyleSheet.create({
     backgroundImage: {
         opacity: 0.5,
     },
-    scrollViewContainer: {
+    container: {
         flexGrow: 1,
         justifyContent: 'center',
         paddingHorizontal: 20,
@@ -87,7 +85,7 @@ const styles = StyleSheet.create({
     input: {
         height: 50,
         borderWidth: 1,
-        borderColor: '#FFFFFF',
+        borderColor: '#fff',
         borderRadius: 25,
         paddingHorizontal: 15,
         fontSize: 16,
