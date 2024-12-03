@@ -15,17 +15,13 @@ export default function SignupScreen() {
 
     return (
         <View style={styles.container}>
-            {/* Background Image with reduced opacity */}
             <ImageBackground
-                source={require('../../assets/background/pexels-ryank-20042214.jpg')} // Update the path to your image
+                source={require('../assets/background/pexels-ryank-20042214.jpg')}
                 style={styles.background}
-                imageStyle={styles.backgroundImage} // Adjust opacity
+                imageStyle={styles.backgroundImage}
             >
                 <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-                    {/* Logo */}
                     <Text style={styles.logo}>SkiMate</Text>
-
-                    {/* Name Fields */}
                     <View style={styles.row}>
                         <TextInput
                             style={[styles.input, styles.halfInput]}
@@ -38,8 +34,6 @@ export default function SignupScreen() {
                             placeholderTextColor="#FFFFFF"
                         />
                     </View>
-
-                    {/* Email Input */}
                     <View style={styles.inputContainer}>
                         <TextInput
                             style={styles.input}
@@ -47,8 +41,6 @@ export default function SignupScreen() {
                             placeholderTextColor="#FFFFFF"
                         />
                     </View>
-
-                    {/* Phone Input */}
                     <View style={styles.inputContainer}>
                         <TextInput
                             style={styles.input}
@@ -57,8 +49,6 @@ export default function SignupScreen() {
                             keyboardType="phone-pad"
                         />
                     </View>
-
-                    {/* Password Input */}
                     <View style={styles.inputContainer}>
                         <TextInput
                             style={styles.input}
@@ -67,8 +57,6 @@ export default function SignupScreen() {
                             secureTextEntry
                         />
                     </View>
-
-                    {/* Confirm Password Input */}
                     <View style={styles.inputContainer}>
                         <TextInput
                             style={styles.input}
@@ -77,8 +65,6 @@ export default function SignupScreen() {
                             secureTextEntry
                         />
                     </View>
-
-                    {/* Ski Level Input */}
                     <View style={styles.inputContainer}>
                         <TextInput
                             style={styles.input}
@@ -86,8 +72,6 @@ export default function SignupScreen() {
                             placeholderTextColor="#FFFFFF"
                         />
                     </View>
-
-                    {/* Sign Up Button */}
                     <TouchableOpacity style={styles.button}>
                         <Text style={styles.buttonText}>S'inscrire</Text>
                     </TouchableOpacity>
@@ -105,7 +89,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     backgroundImage: {
-        opacity: 0.5, // Lower background opacity
+        opacity: 0.5
     },
     scrollViewContainer: {
         flexGrow: 1,
