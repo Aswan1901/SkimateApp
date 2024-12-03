@@ -38,3 +38,4 @@ yarn-error.*
 app-example
 .idea/vcs.xml
 .idea/workspace.xml
+/.idea/
