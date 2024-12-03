@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
     View,
     Text,
@@ -6,9 +6,13 @@ import {
     TouchableOpacity,
     StyleSheet,
     ImageBackground,
-    ScrollView,
+    ScrollView, Alert,
 } from 'react-native';
+
+import axios from "axios";
+
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginScreen() {
     const navigation = useNavigation();
@@ -44,7 +48,7 @@ export default function LoginScreen() {
                     </TouchableOpacity>
 
                     <View style={styles.linksContainer}>
-                        <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+                        <TouchableOpacity onPress={() => navigation.navigate('register')}>
                             <Text style={styles.linkText}>S'inscrire</Text>
                         </TouchableOpacity>
                         <TouchableOpacity>
