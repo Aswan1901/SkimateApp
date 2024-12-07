@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
     View,
     Text,
@@ -6,17 +6,10 @@ import {
     TouchableOpacity,
     StyleSheet,
     ImageBackground,
-    ScrollView, Alert,
 } from 'react-native';
-
-import axios from "axios";
-
-import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Link } from 'expo-router';
 
 export default function LoginScreen() {
-    const navigation = useNavigation();
-
     return (
         <View style={styles.LoginContainer}>
             <ImageBackground
@@ -24,7 +17,7 @@ export default function LoginScreen() {
                 style={styles.background}
                 imageStyle={styles.backgroundImage}
             >
-                <View contentContainerStyle={styles.container}>
+                <View style={styles.container}>
                     <Text style={styles.logo}>SkiMate</Text>
 
                     <View style={styles.inputContainer}>
@@ -43,14 +36,19 @@ export default function LoginScreen() {
                             secureTextEntry
                         />
                     </View>
-                    <TouchableOpacity onPress={()=> navigation.navigate('dashboard')} style={styles.button}>
-                        <Text style={styles.buttonText}>se connecter</Text>
-                    </TouchableOpacity>
+
+                    <Link href="/dashboard" asChild>
+                        <TouchableOpacity style={styles.button}>
+                            <Text style={styles.buttonText}>Se connecter</Text>
+                        </TouchableOpacity>
+                    </Link>
 
                     <View style={styles.linksContainer}>
-                        <TouchableOpacity onPress={() => navigation.navigate('register')}>
-                            <Text style={styles.linkText}>S'inscrire</Text>
-                        </TouchableOpacity>
+                        <Link href="/register" asChild>
+                            <TouchableOpacity>
+                                <Text style={styles.linkText}>S'inscrire</Text>
+                            </TouchableOpacity>
+                        </Link>
                         <TouchableOpacity>
                             <Text style={styles.linkText}>Mot de passe oublié</Text>
                         </TouchableOpacity>

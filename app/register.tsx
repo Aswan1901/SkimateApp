@@ -8,11 +8,9 @@ import {
     ImageBackground,
     ScrollView,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { Link } from 'expo-router';
 
-export default function SignupScreen() {
-    const navigation = useNavigation();
-
+export default function RegisterScreen() {
     return (
         <View style={styles.container}>
             <ImageBackground
@@ -72,9 +70,11 @@ export default function SignupScreen() {
                             placeholderTextColor="#FFFFFF"
                         />
                     </View>
-                    <TouchableOpacity style={styles.button}>
-                        <Text style={styles.buttonText}>S'inscrire</Text>
-                    </TouchableOpacity>
+                    <Link href="/dashboard" asChild>
+                        <TouchableOpacity style={styles.button}>
+                            <Text style={styles.buttonText}>S'inscrire</Text>
+                        </TouchableOpacity>
+                    </Link>
                 </ScrollView>
             </ImageBackground>
         </View>
@@ -137,4 +137,3 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 });
-
