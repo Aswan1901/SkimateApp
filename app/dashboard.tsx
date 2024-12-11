@@ -8,8 +8,12 @@ import {
 } from "react-native";
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { Link } from 'expo-router';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Dashboard() {
+    const token = AsyncStorage.getItem('token')
+    console.log(token)
+
     return (
         <View style={styles.container}>
             <View style={styles.profile}>
