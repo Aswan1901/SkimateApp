@@ -12,6 +12,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter, Link } from 'expo-router';
 import Constants from 'expo-constants';
+import * as Keychain from 'react-native-keychain';
+
 
 const LoginScreen: React.FC = () => {
     let API_URL = 'http://localhost:3000/';
@@ -54,8 +56,13 @@ const LoginScreen: React.FC = () => {
 
             if (response.status === 200) {
                 Alert.alert('Vous êtes connecté(e) avec succès.');
-                const token = response.data.token;
+                const {token, refresh_token} = response.data.token;
+                // Sauvegarder le JWT dans AsyncStorage (token d'accès)
                 await AsyncStorage.setItem('token', token);
+
+                // Sauvegarder le Refresh Token dans le Keychain (plus sécurisé)
+                await Keychain.setGenericPassword('refresh_token', refresh_token);
+
                 console.log(response.data.token);
                 router.push('/dashboard');
             } else {
