@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+
 import { Link } from 'expo-router';
 
 interface NavBarProps {
@@ -31,6 +32,12 @@ const NavBar: React.FC<NavBarProps> = ({ title = "SkiMate" }) => {
             <Link href="/dashboard" asChild>
                 <TouchableOpacity style={styles.iconContainer}>
                     <Ionicons name="person" size={24} color="#fff" />
+                </TouchableOpacity>
+            </Link>
+            {/* Bouton Settings */}
+            <Link href="/settings" asChild>
+                <TouchableOpacity style={styles.iconContainer}>
+                    <Ionicons name="settings-sharp" size={24} color="#fff" />
                 </TouchableOpacity>
             </Link>
         </View>

@@ -9,16 +9,18 @@ import {
     Alert,
 } from 'react-native';
 import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from 'expo-router';
+import * as SecureStore from 'expo-secure-store';
+import {Link, useRouter} from 'expo-router';
 import Constants from 'expo-constants';
+import { Platform } from 'react-native';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SignupScreen: React.FC = () => {
     let API_URL = 'http://localhost:3000/';
     if (!Constants.expoConfig || !Constants.expoConfig.extra) {
         console.warn("Les variables d'environnement ne sont pas accessibles.");
     } else {
-        API_URL = Constants.expoConfig.extra.API_URL;
+        API_URL = Constants.expoConfig.extra.apiUrl;
     }
 
     const router = useRouter();
@@ -56,14 +58,22 @@ const SignupScreen: React.FC = () => {
 
             if (response.status === 200 || response.status === 201) {
                 Alert.alert('Vous êtes inscrit(e) avec succès.');
-                const token = response.data.token;
-                await AsyncStorage.setItem('token', token);
+                const token= response.data.token;
+                const refreshToken = response.data.refresh_token;
+
+                if (Platform.OS === 'web'){
+                    await AsyncStorage.setItem('refresh_token', refreshToken);
+                    await AsyncStorage.setItem('token', refreshToken);
+                }else {
+                    // Sauvegarder les tokens dans SecureStore
+                    await SecureStore.setItemAsync('token', token);
+                    await SecureStore.setItemAsync('refresh_token', refreshToken);
+                }
                 console.log('Response received:', response);
                 router.push('/dashboard');
             } else {
                 setError("Erreur inattendue. Veuillez réessayer.");
             }
-
         } catch (err: any) {
             // Gestion des erreurs axios
             if (err.response) {
@@ -108,13 +118,13 @@ const SignupScreen: React.FC = () => {
                             style={[styles.input, styles.halfInput]}
                             placeholder="Nom"
                             onChangeText={setLastname}
-                            placeholderTextColor="#FFFFFF"
+                            placeholderTextColor="#000"
                         />
                         <TextInput
                             style={[styles.input, styles.halfInput]}
                             placeholder="Prénom"
                             onChangeText={setName}
-                            placeholderTextColor="#FFFFFF"
+                            placeholderTextColor="#000"
                         />
                     </View>
                     <View style={styles.inputContainer}>
@@ -122,7 +132,7 @@ const SignupScreen: React.FC = () => {
                             style={styles.input}
                             placeholder="Email"
                             onChangeText={setEmail}
-                            placeholderTextColor="#FFFFFF"
+                            placeholderTextColor="#000"
                             keyboardType="email-address"
                         />
                     </View>
@@ -131,7 +141,7 @@ const SignupScreen: React.FC = () => {
                             style={styles.input}
                             placeholder="Téléphone"
                             onChangeText={setTelephone}
-                            placeholderTextColor="#FFFFFF"
+                            placeholderTextColor="#000"
                             keyboardType="phone-pad"
                         />
                     </View>
@@ -140,7 +150,7 @@ const SignupScreen: React.FC = () => {
                             style={styles.input}
                             placeholder="Mot de passe"
                             onChangeText={setPassword}
-                            placeholderTextColor="#FFFFFF"
+                            placeholderTextColor="#000"
                             secureTextEntry
                         />
                     </View>
@@ -149,7 +159,7 @@ const SignupScreen: React.FC = () => {
                             style={styles.input}
                             placeholder="Confirmer le mot de passe"
                             onChangeText={setConfirmPassword}
-                            placeholderTextColor="#FFFFFF"
+                            placeholderTextColor="#000"
                             secureTextEntry
                         />
                     </View>
@@ -159,13 +169,18 @@ const SignupScreen: React.FC = () => {
                               style={styles.input}
                               placeholder="Niveau de ski"
                               onChangeText={setSkiLevel}
-                              placeholderTextColor="#FFFFFF"
+                              placeholderTextColor="#000"
                           />
                       </View>
                     */}
                     <TouchableOpacity onPress={handleRegister} style={styles.button}>
                         <Text style={styles.buttonText}>S'inscrire</Text>
                     </TouchableOpacity>
+                    <Link href="/" asChild>
+                        <TouchableOpacity style={{ marginTop: 20 }}>
+                            <Text style={{ color: 'black', textAlign: 'center' }}>Se connecter</Text>
+                        </TouchableOpacity>
+                    </Link>
                 </View>
             </ImageBackground>
         </View>

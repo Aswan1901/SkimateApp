@@ -10,6 +10,11 @@ import React, {useState} from "react";
 import SelectDropdown from 'react-native-select-dropdown'
 import { AntDesign } from '@expo/vector-icons';
 import axios from "axios";
+import {useRouter} from "expo-router";
+import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Platform } from 'react-native';
+
 
 const  SettingScreen: React.FC = () => {
 
@@ -21,6 +26,8 @@ const  SettingScreen: React.FC = () => {
     // const [success, setSuccess] = useState<string | null>(null);
     // const [error, setError] = useState<string | null>(null);
 
+
+    const router = useRouter();
     const handlePress=(button: string)=>{
         setIsPressed(button);
     }
@@ -49,8 +56,37 @@ const  SettingScreen: React.FC = () => {
     //             setError(true);
     //         })
     // }
+
+    const handleLogout = async () => {
+        try {
+
+            let token;
+            let refreshToken;
+
+            if (Platform.OS === 'web'){
+                refreshToken = await AsyncStorage.getItem("refresh_token");
+                token = await AsyncStorage.getItem("token");
+            }else {
+                refreshToken = await SecureStore.getItemAsync("refresh_token");
+                token = await SecureStore.getItemAsync("token");
+            }
+
+            if (refreshToken != null && token != null) {
+                if (Platform.OS === 'web'){
+                    await AsyncStorage.removeItem("refresh_token");
+                    await AsyncStorage.removeItem("token");
+                }else{
+                    await SecureStore.deleteItemAsync("refresh_token");
+                    await SecureStore.deleteItemAsync("token");
+                }
+                router.push('/');
+            }
+        }catch (error){
+            console.error(error);
+        }
+    }
     return(
-        <View>
+        <View style={styles.mainContainer}>
             <ImageBackground
                 source={require('../assets/background/pexels-ryank-20042214.jpg')}
                 style={styles.background}
@@ -153,20 +189,20 @@ const  SettingScreen: React.FC = () => {
                                <Text>Contacter un admin</Text>
                            </TouchableOpacity>
                            <TouchableOpacity style={styles.logoutBtn}>
-                               <Text style={styles.logoutBtnText}> Déconnexion<AntDesign name="logout" style={styles.iconLogout}/> </Text>
+                               <Text style={styles.logoutBtnText} onPress={handleLogout}> Déconnexion</Text>
                            </TouchableOpacity>
                        </View>
                     </View>
                 </View>
             </ImageBackground>
         </View>
-
-
     );
-
 };
 
 const styles = StyleSheet.create({
+    mainContainer: {
+        flex: 1,
+    },
     background: {
         flex: 1,
     },
@@ -192,7 +228,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         backgroundColor: '#fff',
         flexDirection: 'row',
-
     },
     input: {
        width:280
@@ -244,7 +279,6 @@ const styles = StyleSheet.create({
     containerPreference:{
         flexDirection:'row',
         justifyContent:'center',
-
     },
     adminBtn:{
         backgroundColor: '#FFFFFF',
@@ -264,7 +298,6 @@ const styles = StyleSheet.create({
         alignItems:'center',
         borderRadius: 10,
         color:'#fff',
-
     },
     btnsContainer:{
         alignItems:'center',
@@ -276,6 +309,5 @@ const styles = StyleSheet.create({
         paddingLeft:5,
         fontSize:12
     }
-
 })
 export default SettingScreen
