@@ -9,16 +9,18 @@ import {
     Alert,
 } from 'react-native';
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter, Link } from 'expo-router';
 import Constants from 'expo-constants';
+import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Platform } from 'react-native';
 
 const LoginScreen: React.FC = () => {
-    let API_URL = 'http://localhost:3000/';
+    let API_URL = 'http://localhost:8000/';
     if (!Constants.expoConfig || !Constants.expoConfig.extra) {
         console.warn("Les variables d'environnement ne sont pas accessibles.");
     } else {
-        API_URL = Constants.expoConfig.extra.API_URL;
+        API_URL = Constants.expoConfig.extra.apiUrl
     }
 
     const router = useRouter();
@@ -54,20 +56,26 @@ const LoginScreen: React.FC = () => {
 
             if (response.status === 200) {
                 Alert.alert('Vous êtes connecté(e) avec succès.');
-                const token = response.data.token;
-                await AsyncStorage.setItem('token', token);
-                console.log(response.data.token);
+                const token= response.data.token;
+                const refreshToken = response.data.refresh_token;
+
+                if (Platform.OS === 'web'){
+                    await AsyncStorage.setItem('refresh_token', refreshToken);
+                    await AsyncStorage.setItem('token', refreshToken);
+                }else {
+                    // Sauvegarder les tokens dans SecureStore
+                    await SecureStore.setItemAsync('token', token);
+                    await SecureStore.setItemAsync('refresh_token', refreshToken);
+                }
                 router.push('/dashboard');
             } else {
                 setError("Identifiants invalides. Veuillez réessayer.");
-
             }
         } catch (err) {
             console.log(err);
             setError('Une erreur s\'est produite. Veuillez réessayer plus tard.');
         }
     };
-
     return (
         <View style={styles.LoginContainer}>
             <ImageBackground
@@ -92,7 +100,6 @@ const LoginScreen: React.FC = () => {
                             value={email}
                         />
                     </View>
-
                     <View style={styles.inputContainer}>
                         <TextInput
                             style={styles.input}

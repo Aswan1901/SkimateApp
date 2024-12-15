@@ -15,14 +15,6 @@ export default function Dashboard() {
     return (
         <View style={styles.container}>
             <View style={styles.profile}>
-                <View style={styles.header}>
-                    <TouchableOpacity style={styles.button}>
-                        <Text style={styles.buttonText}>Contacter un admin</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.button}>
-                        <Text style={styles.buttonText}>Déconnexion</Text>
-                    </TouchableOpacity>
-                </View>
                 <View style={styles.profileDetails}>
                     <Ionicons style={styles.iconPerson} name="person-circle" />
                     <Text style={styles.profileName}>Prénom Nom</Text>

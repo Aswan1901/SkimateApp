@@ -34,13 +34,17 @@ export default {
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
+      ],
+      [
+          "expo-secure-store"
       ]
+
     ],
     experiments: {
       typedRoutes: true
     },
     extra: {
-      API_URL: process.env.API_URL
+      apiUrl: process.env.API_URL
     }
   }
 };
