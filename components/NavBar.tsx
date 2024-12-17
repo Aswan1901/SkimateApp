@@ -40,6 +40,12 @@ const NavBar: React.FC<NavBarProps> = ({ title = "SkiMate" }) => {
                     <Ionicons name="settings-sharp" size={24} color="#fff" />
                 </TouchableOpacity>
             </Link>
+            {/* Bouton Meteo */}
+            <Link href="/weather" asChild>
+                <TouchableOpacity style={styles.iconContainer}>
+                    <Ionicons name="settings-sharp" size={24} color="#fff" />
+                </TouchableOpacity>
+            </Link>
         </View>
     );
 };

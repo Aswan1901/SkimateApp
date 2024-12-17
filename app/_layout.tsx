@@ -1,21 +1,22 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import {Slot, usePathname} from 'expo-router';
+import { Slot, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
-import { useColorScheme } from '@/hooks/useColorScheme';
 
-// Empêche l'écran de splash de disparaître avant le chargement des ressources
+import { useColorScheme } from '@/hooks/useColorScheme';
 import NavBar from '../components/NavBar';
-import {StyleSheet, View} from "react-native";
+import { StyleSheet, View } from 'react-native';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function Layout() {
   const colorScheme = useColorScheme();
   const pathname = usePathname();
+
+  // Chargement des polices
   const [fontsLoaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
@@ -30,14 +31,14 @@ export default function Layout() {
     return null;
   }
 
-
+  // Détermine si la NavBar doit être masquée
   const hideNavbar = pathname === '/' || pathname === '/register';
 
   return (
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <View style={styles.container}>
-          <Slot />
-          {!hideNavbar && <NavBar />}
+          <Slot /> {/* Expo Router charge automatiquement les pages */}
+          <NavBar />
         </View>
         <StatusBar style="auto" />
       </ThemeProvider>
