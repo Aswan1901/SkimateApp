@@ -3,4 +3,5 @@ export type RootStackParamList = {
     Dashboard: undefined;
     Weather: undefined;
     Register: undefined;
+    Map: undefined;
 };
