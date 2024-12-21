@@ -1,67 +1,57 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, ScrollView, ImageBackground } from 'react-native';
 import apiClient from '@/api/apiClient';
 
-const Weather: React.FC = () => {
+const WeatherScreen: React.FC = () => {
+
     const [forecast, setForecast] = useState<any>(null);
-    const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const fetchWeather = async () => {
-            const url = '/weather'; // Endpoint relatif
-            console.log(`Tentative de requête POST à l'URL: ${apiClient.defaults.baseURL}${url}`);
-
+        const fetchweather = async() =>{
             try {
-                const response = await apiClient.post(url, {
-                    location: "La Plagne"
+                const response = await weatherApi.post("localhost:8000/api/weather", {
+                    location: "La plagne"
                 });
 
-                // Assurez-vous que response.data.forecasts existe et contient des données
-                if (response.data && response.data.forecasts && response.data.forecasts.length > 0) {
-                    setForecast(response.data.forecasts[0]); // Données du jour 1
-                } else {
-                    setError('Aucune donnée de prévision disponible.');
+                if(response?.data?.forecasts?.length > 0){
+                    setForecast(response.data.forecasts);
+                }else{
+                    setForecast("Aucune donnée de prévision météo trouvé");
                 }
-            } catch (err: any) {
-                console.error('Erreur complète :', err);
-                console.error(
-                    `Erreur réseau: ${err.message}\nURL utilisée: ${apiClient.defaults.baseURL}${url}`
-                );
-                setError('Impossible de charger les prévisions météo.');
-            } finally {
-                setLoading(false);
+            }catch (error){
+                console.error(error);
             }
         };
-
         fetchWeather();
     }, []);
 
-    if (loading) {
-        return (
-            <View style={styles.centered}>
-                <ActivityIndicator size="large" color="#003566" />
-                <Text>Chargement des prévisions...</Text>
-            </View>
-        );
-    }
-
-    if (error) {
-        return (
-            <View style={styles.centered}>
-                <Text style={styles.error}>{error}</Text>
-            </View>
-        );
-    }
-
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.title}>Prévisions Météo - {forecast?.day}</Text>
-            <View style={styles.forecastContainer}>
-                <Text style={styles.text}>Température Matin : {forecast?.morning?.temperature_2m}°C</Text>
-                <Text style={styles.text}>Température Après-midi : {forecast?.afternoon?.temperature_2m}°C</Text>
+        <ImageBackground
+            source={require('../assets/background/pexels-ryank-20042214.jpg')}
+            style={styles.background}
+        >
+            <View style={styles.container}>
+                <Text style={styles.temperature}>3°C</Text>
+                <Text style={styles.status}>Peu nuageux</Text>
+                <Text style={styles.stationName}>Nom de la station</Text>
+
+                <View style={styles.weatherBox}>
+                    <Text style={styles.dayTitle}>Aujourd'hui</Text>
+                    <View style={styles.row}>
+                        <Text style={styles.info}>12:00 🌤️ 15% | 4 m/s</Text>
+                        <Text style={styles.info}>14:00 🌧️ 15% | 4 m/s</Text>
+                    </View>
+                </View>
+
+                <View style={styles.snowInfo}>
+                    <Text>Enneigement :</Text>
+                    <Text>- Neige au sommet : 170 cm</Text>
+                    <Text>- Neige en bas : 58 cm</Text>
+                    <Text>- Nouvelle neige : 6 cm</Text>
+                </View>
             </View>
-        </ScrollView>
+        </ImageBackground>
     );
 };
 
@@ -70,13 +60,12 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         justifyContent: 'center',
         paddingHorizontal: 20,
-        backgroundColor: '#F8F9FA',
     },
-    centered: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
+    // centered: {
+    //     flex: 1,
+    //     justifyContent: 'center',
+    //     alignItems: 'center',
+    // },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
@@ -100,6 +89,42 @@ const styles = StyleSheet.create({
         fontSize: 16,
         textAlign: 'center',
     },
+
+    background: {
+        flex: 1,
+        justifyContent: 'center'
+    },
+    temperature: {
+        fontSize: 50,
+        fontWeight: 'bold',
+        color: '#fff'
+    },
+    status: {
+        fontSize: 18,
+        color: '#fff'
+    },
+    stationName: {
+        fontSize: 16,
+        color: '#fff',
+        marginBottom: 20
+    },
+    weatherBox: {
+        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+        padding: 10,
+        borderRadius: 10
+    },
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+    info: {
+        fontSize: 14
+    },
+    snowInfo: {
+        marginTop: 20,
+        color: '#fff'
+    },
+
 });
 
-export default Weather;
+export default WeatherScreen;
