@@ -1,54 +1,65 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView, ImageBackground } from 'react-native';
 import apiClient from '@/api/apiClient';
+import { WiStrongWind } from "weather-icons-react";
+import { WiSnow } from "weather-icons-react";
 
 const WeatherScreen: React.FC = () => {
 
     const [forecast, setForecast] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchweather = async() =>{
-            try {
-                const response = await weatherApi.post("localhost:8000/api/weather", {
-                    location: "La plagne"
-                });
-
-                if(response?.data?.forecasts?.length > 0){
-                    setForecast(response.data.forecasts);
-                }else{
-                    setForecast("Aucune donnée de prévision météo trouvé");
-                }
-            }catch (error){
-                console.error(error);
-            }
-        };
-        fetchWeather();
-    }, []);
-
     return (
+
         <ImageBackground
-            source={require('../assets/background/pexels-ryank-20042214.jpg')}
+            source={require("../assets/background/pexels-ryank-20042214.jpg")}
             style={styles.background}
+            imageStyle={styles.backgroundImage}
         >
             <View style={styles.container}>
-                <Text style={styles.temperature}>3°C</Text>
-                <Text style={styles.status}>Peu nuageux</Text>
-                <Text style={styles.stationName}>Nom de la station</Text>
-
-                <View style={styles.weatherBox}>
-                    <Text style={styles.dayTitle}>Aujourd'hui</Text>
-                    <View style={styles.row}>
-                        <Text style={styles.info}>12:00 🌤️ 15% | 4 m/s</Text>
-                        <Text style={styles.info}>14:00 🌧️ 15% | 4 m/s</Text>
+                <View style={styles.containerTop}>
+                    <Text style={styles.temperature}>3°C</Text>
+                    <Text style={styles.stationName}>La plagne</Text>
+                    <Text>Météo: Partiellement nuageux, nuageux</Text>
+                    <Text>Vitesse du vent: 9.2 km/h</Text>
+               </View>
+                <View style={styles.card}>
+                    <Text style={styles.dayText}>Ajourd'hui</Text>
+                    <View style={styles.weatherInfoCard}>
+                        <View style={styles.weatherInfo}>
+                            <Text style={styles.title}>Matin:</Text>
+                            <Text style={styles.textInfo}>Température: -4.4°C</Text>
+                            <Text style={styles.textInfo}>Vitesse du vent: 9.2 km/h</Text>
+                        </View>
+                        <View style={styles.weatherInfo}>
+                            <Text style={styles.title}>Après-midi:</Text>
+                            <Text style={styles.textInfo}>Température: -4.1°C</Text>
+                            <Text style={styles.textInfo}>Vitesse du vent: 8.2 km/h</Text>
+                        </View>
+                    </View>
+                    {/*<Text>Neige: 0 cm</Text>*/}
+                    {/*<Text>Profondeur de neige: 1 cm</Text>*/}
+                    {/*<Text>Météo: Partiellement nuageux, nuageux</Text>*/}
+                    {/*<Text>Neige: 0 cm</Text>*/}
+                    {/*<Text>Profondeur de neige: 1 cm</Text>*/}
+                    {/*<Text>Météo: Partiellement nuageux, nuageux</Text>*/}
+                </View>
+                <View style={styles.weekCard}>
+                    <View style={styles.weekDayInfo}>
+                        <Text style={styles.weekDay}>Lundi :</Text>
+                        <Text>0°C</Text>
+                        <WiStrongWind style={styles.weatherIcon} size={25} color='#003566'/><Text> 10.5 km/h</Text>
+                        <WiSnow style={styles.weatherIcon}  size={25} color='#003566'/><Text> 0 cm</Text>
+                    </View>
+                    <View style={styles.weekDayInfo}>
+                        <Text style={styles.weekDay}>Mardi :</Text>
+                        <Text>0°C</Text>
+                        <WiStrongWind style={styles.weatherIcon} size={25} color='#003566'/><Text> 10.5 km/h</Text>
+                        <WiSnow style={styles.weatherIcon}  size={25} color='#003566'/><Text> 0 cm</Text>
                     </View>
                 </View>
-
-                <View style={styles.snowInfo}>
-                    <Text>Enneigement :</Text>
-                    <Text>- Neige au sommet : 170 cm</Text>
-                    <Text>- Neige en bas : 58 cm</Text>
-                    <Text>- Nouvelle neige : 6 cm</Text>
+                <View style={styles.snowCard}>
+                    <Text>chute de neige :1.5</Text>
+                    <Text>profondeur de neige :1.26cm</Text>
                 </View>
             </View>
         </ImageBackground>
@@ -57,42 +68,69 @@ const WeatherScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
     container: {
-        flexGrow: 1,
-        justifyContent: 'center',
-        paddingHorizontal: 20,
+        padding: 10,
     },
-    // centered: {
-    //     flex: 1,
-    //     justifyContent: 'center',
-    //     alignItems: 'center',
-    // },
-    title: {
-        fontSize: 24,
+    background: {
+        flex: 1,
+    },
+    backgroundImage: {
+        opacity: 0.5,
+    },
+    containerTop:{
+        alignItems: "center",
+        marginTop:20,
+        marginBottom:30
+
+    },
+    locationText: {
+        fontSize: 22,
         fontWeight: 'bold',
-        color: '#003566',
         textAlign: 'center',
         marginBottom: 20,
     },
-    forecastContainer: {
+    card: {
+        marginBottom: 20,
         padding: 15,
-        backgroundColor: '#ffffff',
+        backgroundColor: '#f1f1f1',
         borderRadius: 8,
-        elevation: 2,
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        // elevation: 2,
+        alignItems: "center",
+        opacity:0.8
     },
-    text: {
-        fontSize: 16,
-        color: '#555',
-        marginVertical: 5,
+    weekCard: {
+        padding: 15,
+        backgroundColor: '#f1f1f1',
+        borderRadius: 8,
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        // elevation: 2,
+        opacity:0.8
     },
-    error: {
-        color: 'red',
-        fontSize: 16,
-        textAlign: 'center',
+    snowCard: {
+        marginTop:20,
+        padding: 15,
+        backgroundColor: '#f1f1f1',
+        borderRadius: 8,
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        // elevation: 2,
+        opacity:0.8,
+        alignItems:'center',
     },
-
-    background: {
-        flex: 1,
-        justifyContent: 'center'
+    dayText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    title: {
+        fontWeight: 'bold',
+        marginTop: 10,
+        textAlign:'center',
     },
     temperature: {
         fontSize: 50,
@@ -106,24 +144,31 @@ const styles = StyleSheet.create({
     stationName: {
         fontSize: 16,
         color: '#fff',
-        marginBottom: 20
+        marginBottom: 5,
+        fontWeight: 'bold',
     },
-    weatherBox: {
-        backgroundColor: 'rgba(255, 255, 255, 0.7)',
-        padding: 10,
-        borderRadius: 10
-    },
-    row: {
+    weatherInfoCard:{
         flexDirection: 'row',
-        justifyContent: 'space-between'
     },
-    info: {
-        fontSize: 14
+
+    textInfo: {
+        fontSize: 12,
+        textAlign: 'center',
+        paddingHorizontal: 10,
     },
-    snowInfo: {
-        marginTop: 20,
-        color: '#fff'
+
+    weatherIcon: {
+        marginLeft: 10,
     },
+    weekDay:{
+        marginRight:20,
+    },
+    weekDayInfo:{
+        alignItems:'center',
+        flexDirection: 'row',
+        justifyContent: 'center',
+    },
+
 
 });
 
