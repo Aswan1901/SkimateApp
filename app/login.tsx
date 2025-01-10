@@ -45,7 +45,7 @@ const LoginScreen: React.FC = () => {
         }
 
         try {
-            const response = await axios.post(`${API_URL}/api/login`, {
+            const response = await axios.post(`${API_URL}api/login`, {
                 email,
                 password,
             }, {
@@ -60,14 +60,13 @@ const LoginScreen: React.FC = () => {
                 const refreshToken = response.data.refresh_token;
 
                 if (Platform.OS === 'web'){
+                    await AsyncStorage.setItem('token', token);
                     await AsyncStorage.setItem('refresh_token', refreshToken);
-                    await AsyncStorage.setItem('token', refreshToken);
                 }else {
                     // Sauvegarder les tokens dans SecureStore
                     await SecureStore.setItemAsync('token', token);
                     await SecureStore.setItemAsync('refresh_token', refreshToken);
                 }
-
                 router.push('/dashboard');
             } else {
                 setError("Identifiants invalides. Veuillez réessayer.");
