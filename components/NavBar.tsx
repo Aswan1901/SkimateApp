@@ -12,7 +12,7 @@ const NavBar: React.FC<NavBarProps> = ({ title = "SkiMate" }) => {
     return (
         <View style={styles.container}>
             {/* Bouton Home */}
-            <Link href="/" asChild>
+            <Link href="/login" asChild>
                 <TouchableOpacity style={styles.iconContainer}>
                     <Ionicons name="home" size={24} color="#fff" />
                 </TouchableOpacity>

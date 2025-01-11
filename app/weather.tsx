@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView, ImageBackground } from 'react-native';
 import apiClient from '@/api/apiClient';
-import { WiDaySunnyOvercast, WiStrongWind, WiDaySunny, WiDayCloudy, WiCloud, WiRain, WiSnow, WiFog } from "weather-icons-react";
+import { WiDaySunnyOvercast, WiStrongWind, WiDaySunny, WiCloudy, WiCloud, WiRain, WiSnow, WiFog } from "weather-icons-react";
 
 const WeatherScreen: React.FC = () => {
 
@@ -13,15 +13,12 @@ const WeatherScreen: React.FC = () => {
     const currentHours = new Date().getHours()
     const isMorning = currentHours <=  12;
 
-
     const getWeatherIcon = (weather: string) => {
         switch (weather.toLowerCase()) {
             case 'ensoleillé':
                 return <WiDaySunny size={50} color="#003566" />;
             case 'nuageux':
-                return <WiCloud size={50} color="#003566" />;
-            case 'partly cloudy':
-                return <WiDayCloudy size={50} color="#003566" />;
+                return <WiCloudy size={50} color="#003566" />;
             case 'pluvieux':
                 return <WiRain size={50} color="#003566" />;
             case 'neigeux':
@@ -50,6 +47,7 @@ const WeatherScreen: React.FC = () => {
                 }
             } catch (err: any) {
                 setError('Impossible de charger les prévisions météo.');
+                console.log(err)
             } finally {
                 setLoading(false);
             }

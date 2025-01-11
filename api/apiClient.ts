@@ -11,7 +11,7 @@ if (Constants.expoConfig?.extra?.apiUrl) {
 }
 
 const apiClient: AxiosInstance = axios.create({
-    baseURL: `${API_URL}api`,
+    baseURL: `${API_URL}/api`,
     timeout: 10000,
 });
 
