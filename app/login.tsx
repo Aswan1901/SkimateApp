@@ -22,7 +22,6 @@ const LoginScreen: React.FC = () => {
     } else {
         API_URL = Constants.expoConfig.extra.apiUrl;
     }
-    console.log(API_URL+'api/login');
 
     const router = useRouter();
     const [email, setEmail] = useState<string>('');
