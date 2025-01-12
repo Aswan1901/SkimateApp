@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, ScrollView, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, ScrollView, ImageBackground, Dimensions } from 'react-native';
 import apiClient from '@/api/apiClient';
-import { WiDaySunnyOvercast, WiStrongWind, WiDaySunny, WiCloudy, WiCloud, WiRain, WiSnow, WiFog } from "weather-icons-react";
+import Feather from '@expo/vector-icons/Feather';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+
+const { width } = Dimensions.get('window'); // Get screen width
 
 const WeatherScreen: React.FC = () => {
 
@@ -16,17 +21,17 @@ const WeatherScreen: React.FC = () => {
     const getWeatherIcon = (weather: string) => {
         switch (weather.toLowerCase()) {
             case 'ensoleillé':
-                return <WiDaySunny size={50} color="#003566" />;
+                return <Feather name="sun" size={20} color="#fcf4a4" />;
             case 'nuageux':
-                return <WiCloudy size={50} color="#003566" />;
+                return <FontAwesome5 name="cloud" size={20} color="#003566" />;
             case 'pluvieux':
-                return <WiRain size={50} color="#003566" />;
+                return <Ionicons name="rainy" size={20} color="#003566" />;
             case 'neigeux':
-                return <WiSnow size={50} color="#003566" />;
+                return <Ionicons name="snow" size={20} color="#003566" />;
             case 'brouillard':
-                return <WiFog size={50} color="#003566" />;
+                return <MaterialCommunityIcons name="weather-fog" size={20} color="#003566" />;
             default:
-                return <WiCloud size={50} color="#003566" />;
+                return '';
         }
     };
 
@@ -72,16 +77,16 @@ const WeatherScreen: React.FC = () => {
                                 <View>
                                     <Text style={styles.temperature}>{today.morning.temperature_2m}°C</Text>
                                     <View style={styles.iconContainer}>
-                                        {getWeatherIcon(today.morning.weather_code[1])}
-                                        <Text style={styles.weatherDescription}>{today.morning.weather_code[0]}</Text>
+                                        {getWeatherIcon(today.morning.weather_code?.[1] || '')}
+                                        <Text style={styles.weatherDescription}>{today.morning.weather_code?.[0]  || 'Donnée non disponibles'}</Text>
                                     </View>
                                 </View>
                             ) : (
                                 <View >
                                     <Text style={styles.temperature}>{today.afternoon.temperature_2m}°C</Text>
                                     <View style={styles.iconContainer}>
-                                        {getWeatherIcon(today.afternoon.weather_code[1])}
-                                        <Text style={styles.weatherDescription}>{today.afternoon.weather_code[0]}</Text>
+                                        {getWeatherIcon(today.afternoon.weather_code?.[1]  || '')}
+                                        <Text style={styles.weatherDescription}>{today.afternoon.weather_code?.[0]  || 'Donnée non disponibles'}</Text>
                                     </View>
                                 </View>
                             )}
@@ -113,29 +118,29 @@ const WeatherScreen: React.FC = () => {
                         <ActivityIndicator size="small" color="#003566" />
                     )}
                 </View>
-                <View style={styles.forecastCard}>
+                <View style={styles.snowForecastCard}>
                     <Text style={styles.title}>Condition de neige d'aujourd'hui</Text>
                     {today ? (
                         isMorning ? (
                             <View style={styles.snowInfo}>
                                 <View>
-                                    <Text style={styles.cardTextSnow}> {today.morning.snowfall}m</Text>
-                                    <Text>Chute</Text>
+                                    <Text style={styles.cardTextSnow}> {today.morning.snowfall || 0}cm</Text>
+                                    <Text style={styles.snowfallInfoText}>Chute</Text>
                                 </View>
                                 <View>
-                                    <Text style={styles.cardTextSnow}>{today.afternoon.snow_depth}m</Text>
-                                    <Text style={styles.snowfallInfoText}>Profondeur</Text>
+                                    <Text style={styles.cardTextSnow}>{today.afternoon.snow_depth || 0}cm</Text>
+                                    <Text style={styles.snowfallInfoText || 0}>Profondeur</Text>
                                 </View>
                             </View>
                         ) : (
                             <View style={styles.snowInfo}>
                                 <View>
-                                    <Text style={styles.cardTextSnow}> {today.afternoon.snowfall}m</Text>
+                                    <Text style={styles.cardTextSnow}> {today.afternoon.snowfall || 0}cm</Text>
                                     <Text style={styles.snowfallInfoText}>Chute</Text>
                                 </View>
                                 <View>
-                                    <Text style={styles.cardTextSnow}>{today.afternoon.snow_depth}m</Text>
-                                    <Text>Profondeur</Text>
+                                    <Text style={styles.cardTextSnow}>{today.afternoon.snow_depth || 0}cm</Text>
+                                    <Text style={styles.snowfallInfoText}>Profondeur</Text>
                                 </View>
                             </View>
                         )
@@ -156,12 +161,12 @@ const WeatherScreen: React.FC = () => {
                                         <Text>{dayForecast.morning?.temperature_2m}°C</Text>
                                     </View>
                                     <View style={styles.windSpeed}>
-                                        <WiStrongWind style={styles.weatherIcon} size={25} color="#003566" />
+                                        <MaterialCommunityIcons style={styles.weatherIcon} name="weather-windy" size={20} color="#003566" />
                                         <Text>{dayForecast.morning?.wind_speed_10m} km/h</Text>
                                     </View>
                                     <View style={styles.snowfall}>
-                                        <WiSnow style={styles.weatherIcon} size={25} color="#003566" />
-                                        <Text>{dayForecast.morning?.snowfall} m</Text>
+                                        <Ionicons style={styles.weatherIcon} name="snow" size={20} color="#003566" />
+                                        <Text>{dayForecast.morning?.snowfall || 0} cm</Text>
                                     </View>
                                 </View>
                             );
@@ -179,7 +184,7 @@ const WeatherScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
     container: {
-        padding: 12,
+        padding: width < 400 ? 8 : 12, // Decrease padding for smaller screens
     },
     background: {
         flex: 1,
@@ -189,43 +194,39 @@ const styles = StyleSheet.create({
     },
     containerTop: {
         alignItems: "center",
-        marginVertical: 20,
+        marginVertical: width < 400 ? 10 : 20, // Adjust vertical margin based on screen width
     },
-
     temperature: {
-        fontSize: 60,
+        fontSize: width < 400 ? 50 : 60, // Decrease font size for smaller screens
         fontWeight: 'bold',
         color: '#fff',
         textAlign: 'center',
     },
-    weatherText: {
+    title: {
         fontWeight: 'bold',
-        color: '#fff',
+        fontSize: width < 400 ? 18 : 20, // Adjust title font size
         textAlign: 'center',
-        marginTop: 5,
     },
     cardsContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        flexWrap: 'wrap',
     },
     weatherCard: {
         backgroundColor: '#ffffff',
         flex: 1,
         marginHorizontal: 5,
-        padding: 15,
+        padding: width < 400 ? 8 : 15,
         borderRadius: 10,
         elevation: 5,
-        opacity:0.8
+        opacity: 0.8,
+        marginTop:10
     },
-    cardHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    cardTitle: {
+    cardTextTemp: {
+        fontSize: width < 400 ? 30 : 40,
+        textAlign: 'center',
+        marginVertical: 5,
         fontWeight: 'bold',
-        fontSize: 18,
-        marginLeft: 10,
     },
     cardText: {
         fontSize: 14,
@@ -233,12 +234,20 @@ const styles = StyleSheet.create({
         marginVertical: 5,
     },
     forecastCard: {
-        padding: 15,
+        padding: 13,
         backgroundColor: '#ffffff',
         borderRadius: 10,
         elevation: 5,
-        opacity:0.8,
-        marginTop:10,
+        opacity: 0.8,
+        marginTop: 10,
+    },
+    snowForecastCard: {
+        padding: 10,
+        backgroundColor: '#ffffff',
+        borderRadius: 10,
+        elevation: 5,
+        opacity: 0.8,
+        marginTop: 10,
     },
     weekDayInfo: {
         flexDirection: 'row',
@@ -252,71 +261,62 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
     },
     dayText: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginRight: 10,
+        fontSize: width < 400 ? 14 : 16,
     },
     windSpeed: {
-        flexDirection: "row",
+        flexDirection: 'row',
         alignItems: 'center',
     },
     snowfall: {
-        flexDirection: "row",
-        alignItems: 'center',
-    },
-    weatherIcon: {
-        marginHorizontal: 10,
-    },
-
-    weatherContainer: {
-        width: '90%',
-        alignItems: 'center',
-    },
-
-    iconContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 10,
     },
-    weatherDescription: {
-        marginLeft: 10,
-        fontSize: 16,
-        fontWeight: '500',
-        color: '#555',
+    snowInfo: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
     },
-    cardTextTemp:{
-        fontSize: 40,
-        textAlign: 'center',
-        marginVertical: 5,
+    cardTitle: {
+        fontSize: 18,
         fontWeight: 'bold',
     },
-    title:{
-        fontWeight: 'bold',
-        fontSize: 13,
-        textAlign: 'center',
+    snowDepth: {
+        marginTop: 5,
+    },
+    snowFallText: {
+        fontSize: 14,
     },
     errorText: {
-        fontSize: 14,
-        fontWeight: '400',
-        color: '#D32F2F',
+        color: 'red',
         textAlign: 'center',
+    },
+    weatherDescription: {
+        textAlign: 'center',
+        fontWeight: 'bold',
+        color: 'grey',
+        fontSize: 15,
+    },
+    iconContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
         marginTop: 10,
+    },
+    weatherIcon: {
+        marginRight: 3,
+    },
+    cardHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     cardTextSnow:{
         fontSize: 30,
         fontWeight: 'bold',
-    },
-    snowInfo:{
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        marginTop: 10,
     },
     snowfallInfoText:{
         textAlign: 'center',
     }
 
 });
-
-
 
 export default WeatherScreen;
