@@ -176,7 +176,7 @@ const SignupScreen: React.FC = () => {
                     <TouchableOpacity onPress={handleRegister} style={styles.button}>
                         <Text style={styles.buttonText}>S'inscrire</Text>
                     </TouchableOpacity>
-                    <Link href="/" asChild>
+                    <Link href="/login" asChild>
                         <TouchableOpacity style={{ marginTop: 20 }}>
                             <Text style={{ color: 'black', textAlign: 'center' }}>Se connecter</Text>
                         </TouchableOpacity>

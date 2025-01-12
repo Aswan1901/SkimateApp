@@ -39,7 +39,7 @@ export default function Dashboard() {
                             <Text style={styles.label}>Pistes Parcourues</Text>
                         </View>
                         <View style={styles.iconContainer}>
-                            <Link href="/app/statistics" asChild>
+                            <Link href="/statistics" asChild>
                                 <TouchableOpacity>
                                     <Ionicons name="stats-chart" style={styles.icon} />
                                     <Text style={styles.label}>Statistiques</Text>
@@ -48,10 +48,12 @@ export default function Dashboard() {
                         </View>
                     </View>
                     <View style={styles.dashboardIcons}>
-                        <View style={styles.iconContainer}>
-                            <Ionicons name="cloudy" style={styles.icon} />
-                            <Text style={styles.label}>Météo</Text>
-                        </View>
+                        <Link href='/weather'>
+                            <TouchableOpacity style={styles.iconContainer}>
+                                <Ionicons name="cloudy" style={styles.icon} />
+                                <Text style={styles.label}>Météo</Text>
+                            </TouchableOpacity>
+                        </Link>
                         <View style={styles.iconContainer}>
                             <Ionicons name="settings" style={styles.icon} />
                             <Text style={styles.label}>Paramètre</Text>

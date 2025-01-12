@@ -32,12 +32,13 @@ export default function Layout() {
   }
 
   // Détermine si la NavBar doit être masquée
-  const hideNavbar = pathname === '/' || pathname === '/register';
+  const hideNavbar = pathname === '/login' || pathname === '/register';
 
   return (
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <View style={styles.container}>
           <Slot /> {/* Expo Router charge automatiquement les pages */}
+          {/*{!hideNavbar && <NavBar />}*/}
           <NavBar />
         </View>
         <StatusBar style="auto" />
