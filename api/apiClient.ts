@@ -2,8 +2,10 @@ import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 
 import { router } from 'expo-router';
 import Constants from 'expo-constants';
 import * as SecureStore from "expo-secure-store";
+import { Platform } from 'react-native';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-let API_URL = 'http://localhost:8000';
+let API_URL = 'http://localhost:8000/';
 if (Constants.expoConfig?.extra?.apiUrl) {
     API_URL = Constants.expoConfig.extra.apiUrl;
 }
@@ -18,8 +20,13 @@ let isRefreshing = false;
 let failedQueue: any[] = [];
 
 const refreshToken = async () => {
-    const refresh_token = await SecureStore.getItemAsync('refresh_token');
-    if (!refresh_token) throw new Error('No refresh token');
+    if (Platform.OS === 'web') {
+        const refresh_token = await AsyncStorage.getItem('refresh_token');
+        if (!refresh_token) throw new Error('No refresh token');
+    }else {
+        const refresh_token = await SecureStore.getItemAsync('refresh_token');
+        if (!refresh_token) throw new Error('No refresh token');
+    }
 
     const response = await axios.post(`${API_URL}/api/token/refresh`, { refresh_token });
     return response.data.token;
@@ -36,7 +43,12 @@ const processQueue = (error: any, token: string | null = null) => {
 // Intercepteur de requêtes : Ajoute le token
 apiClient.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
-        const token = await SecureStore.getItemAsync('token');
+        let token;
+        if (Platform.OS === 'web') {
+            token = await AsyncStorage.getItem('token');
+        }else {
+            token = await SecureStore.getItemAsync('token');
+        }
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -68,7 +80,12 @@ apiClient.interceptors.response.use(
 
             try {
                 const newToken = await refreshToken();
-                await SecureStore.setItemAsync('token', newToken);
+
+                if (Platform.OS === 'web') {
+                    await AsyncStorage.setItem('token', newToken);
+                } else {
+                    await SecureStore.setItemAsync('token', newToken);
+                }
 
                 processQueue(null, newToken);
                 isRefreshing = false;
@@ -80,15 +97,18 @@ apiClient.interceptors.response.use(
                 isRefreshing = false;
 
                 console.warn('Session expirée, redirection vers Login...');
-                await SecureStore.deleteItemAsync('token');
-                await SecureStore.deleteItemAsync('refresh_token');
-
+                if (Platform.OS === 'web') {
+                    await AsyncStorage.removeItem('token');
+                    await AsyncStorage.removeItem('refresh_token');
+                } else {
+                    await SecureStore.deleteItemAsync('token');
+                    await SecureStore.deleteItemAsync('refresh_token');
+                }
                 router.replace('/login'); // Redirige vers la page de Login
 
                 return Promise.reject(refreshError);
             }
         }
-
         return Promise.reject(error);
     }
 );

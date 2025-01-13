@@ -1,0 +1,189 @@
+{
+  "version": 8,
+  "sources": {
+    "ski-data": {
+      "type": "geojson",
+      "data": {}
+    }
+  },
+  "layers": [
+    /*------------------------------------------------------
+      Contour blanc pour toutes les pistes (run)
+    ------------------------------------------------------*/
+    {
+      "id": "ski-runs-border",
+      "type": "line",
+      "source": "ski-data",
+      "filter": ["==", "category", "run"],
+      "paint": {
+        "line-color": "#FFFFFF",
+        "line-width": [
+          "case",
+          ["==", ["get", "difficulty"], "easy"], 3,
+          ["==", ["get", "difficulty"], "intermediate"], 3,
+          ["==", ["get", "difficulty"], "advanced"], 4,
+          ["==", ["get", "difficulty"], "expert"], 4,
+          3
+        ],
+        "line-opacity": 0.7
+      },
+      "layout": {
+        "line-cap": "round",
+        "line-join": "round"
+      }
+    },
+    /*------------------------------------------------------
+      Lignes des pistes (run) sans freeride
+    ------------------------------------------------------*/
+    {
+      "id": "ski-runs",
+      "type": "line",
+      "source": "ski-data",
+      "filter": [
+        "all",
+        ["==", "category", "run"],
+        ["!=", "difficulty", "freeride"]
+      ],
+      "paint": {
+        "line-color": [
+          "case",
+          ["==", ["get", "difficulty"], "easy"], "#0000FF",
+          ["==", ["get", "difficulty"], "intermediate"], "#FF0000",
+          ["==", ["get", "difficulty"], "advanced"], "#000000",
+          ["==", ["get", "difficulty"], "expert"], "#000000",
+          "#00FF00"
+        ],
+        "line-width": [
+          "case",
+          ["==", ["get", "difficulty"], "easy"], 2,
+          ["==", ["get", "difficulty"], "intermediate"], 2,
+          ["==", ["get", "difficulty"], "advanced"], 3,
+          ["==", ["get", "difficulty"], "expert"], 3,
+          2
+        ]
+      },
+      "layout": {
+        "line-cap": "round",
+        "line-join": "round"
+      }
+    },
+    /*------------------------------------------------------
+      Lignes des pistes freeride
+    ------------------------------------------------------*/
+    {
+      "id": "ski-runs-freeride",
+      "type": "line",
+      "source": "ski-data",
+      "filter": [
+        "all",
+        ["==", "category", "run"],
+        ["==", "difficulty", "freeride"]
+      ],
+      "paint": {
+        "line-color": "#000000",
+        "line-width": 2,
+        "line-dasharray": [2, 4]
+      },
+      "layout": {
+        "line-cap": "round",
+        "line-join": "round"
+      }
+    },
+    /*------------------------------------------------------
+      Flèches directionnelles pour les pistes (run)
+    ------------------------------------------------------*/
+    {
+      "id": "ski-runs-arrows",
+      "type": "symbol",
+      "source": "ski-data",
+      "filter": ["==", "category", "run"],
+      "layout": {
+        "symbol-placement": "line",       // Aligner les flèches le long de la piste
+        "symbol-spacing": 150,           // Espacement entre les flèches
+        "text-field": "▶",               // Flèche
+        "text-size": 28,                 // Taille des flèches
+        "text-rotate": ["get", "orientation"], // Utilise l'angle calculé depuis le backend
+        "text-rotation-alignment": "map",     // Aligner par rapport à la carte
+        "text-keep-upright": false       // Autorise les rotations à 180° si nécessaire
+      },
+      "paint": {
+        "text-color": [
+          "case",
+          ["==", ["get", "difficulty"], "easy"], "#0000FF",
+          ["==", ["get", "difficulty"], "intermediate"], "#FF0000",
+          ["==", ["get", "difficulty"], "advanced"], "#000000",
+          ["==", ["get", "difficulty"], "expert"], "#000000",
+          ["==", ["get", "difficulty"], "freeride"], "#000000",
+          "#00FF00"
+        ]
+      }
+    },
+    /*------------------------------------------------------
+      Noms des pistes (run)
+    ------------------------------------------------------*/
+    {
+      "id": "ski-runs-names",
+      "type": "symbol",
+      "source": "ski-data",
+      "filter": ["==", "category", "run"],
+      "layout": {
+        "symbol-placement": "line",
+        "symbol-spacing": 400,
+        "text-field": ["get", "name"],
+        "text-size": 14,
+        "text-offset": [0, 0.8]
+      },
+      "paint": {
+        "text-color": [
+          "case",
+          ["==", ["get", "difficulty"], "easy"], "#0000FF",
+          ["==", ["get", "difficulty"], "intermediate"], "#FF0000",
+          ["==", ["get", "difficulty"], "advanced"], "#000000",
+          ["==", ["get", "difficulty"], "expert"], "#000000",
+          ["==", ["get", "difficulty"], "freeride"], "#000000",
+          "#00FF00"
+        ],
+        "text-halo-color": "#ffffff",
+        "text-halo-width": 2
+      }
+    },
+    /*------------------------------------------------------
+      Remontées mécaniques (lift)
+    ------------------------------------------------------*/
+    {
+      "id": "ski-lifts",
+      "type": "line",
+      "source": "ski-data",
+      "filter": ["==", "category", "lift"],
+      "paint": {
+        "line-color": "#000000", /* Noir */
+        "line-width": 2 /* Plein, sans pointillés */
+      },
+      "layout": {
+        "line-cap": "round",
+        "line-join": "round"
+      }
+    },
+    /*------------------------------------------------------
+      Noms des remontées mécaniques (lift)
+    ------------------------------------------------------*/
+    {
+      "id": "ski-lifts-names",
+      "type": "symbol",
+      "source": "ski-data",
+      "filter": ["==", "category", "lift"],
+      "layout": {
+        "symbol-placement": "line",
+        "symbol-spacing": 400,
+        "text-field": ["get", "name"],
+        "text-size": 14,
+        "text-offset": [0, 1.2]
+      },
+      "paint": {
+        "text-color": "#000000",
+        "text-halo-color": "#ffffff",
+        "text-halo-width": 2
+      }
+    }
+  ]
+}

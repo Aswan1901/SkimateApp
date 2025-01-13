@@ -20,7 +20,7 @@ const LoginScreen: React.FC = () => {
     if (!Constants.expoConfig || !Constants.expoConfig.extra) {
         console.warn("Les variables d'environnement ne sont pas accessibles.");
     } else {
-        API_URL = Constants.expoConfig.extra.apiUrl
+        API_URL = Constants.expoConfig.extra.apiUrl;
     }
 
     const router = useRouter();
@@ -59,9 +59,14 @@ const LoginScreen: React.FC = () => {
                 const token= response.data.token;
                 const refreshToken = response.data.refresh_token;
 
-                await SecureStore.setItemAsync('token', token);
-                await SecureStore.setItemAsync('refresh_token', refreshToken);
-
+                if (Platform.OS === 'web'){
+                    await AsyncStorage.setItem('token', token);
+                    await AsyncStorage.setItem('refresh_token', refreshToken);
+                }else {
+                    // Sauvegarder les tokens dans SecureStore
+                    await SecureStore.setItemAsync('token', token);
+                    await SecureStore.setItemAsync('refresh_token', refreshToken);
+                }
                 router.push('/dashboard');
             } else {
                 setError("Identifiants invalides. Veuillez réessayer.");
