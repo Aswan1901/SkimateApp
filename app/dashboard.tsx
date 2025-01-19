@@ -47,7 +47,7 @@ export default function Dashboard() {
                         </View>
                     </View>
                     <View style={styles.dashboardIcons}>
-                        <Link href='/weather'>
+                        <Link href='/weather' asChild>
                             <TouchableOpacity style={styles.iconContainer}>
                                 <Ionicons name="cloudy" style={styles.icon} />
                                 <Text style={styles.label}>Météo</Text>

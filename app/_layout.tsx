@@ -38,7 +38,8 @@ export default function Layout() {
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <View style={styles.container}>
           <Slot /> {/* Expo Router charge automatiquement les pages */}
-          {!hideNavbar && <NavBar />}
+          {/*{!hideNavbar && <NavBar />}*/}
+          <NavBar />
         </View>
         <StatusBar style="auto" />
       </ThemeProvider>

@@ -79,7 +79,7 @@ const  SettingScreen: React.FC = () => {
                     await SecureStore.deleteItemAsync("refresh_token");
                     await SecureStore.deleteItemAsync("token");
                 }
-                router.push('/');
+                router.push('/login');
             }
         }catch (error){
             console.error(error);

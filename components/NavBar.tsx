@@ -13,7 +13,7 @@ const NavBar: React.FC<NavBarProps> = ({ title = "SkiMate" }) => {
     return (
         <View style={styles.container}>
             {/* Bouton Home */}
-            <Link href="/" asChild>
+            <Link href="/login" asChild>
                 <TouchableOpacity style={styles.iconContainer}>
                     <Ionicons name="home" size={24} color="#fff" />
                 </TouchableOpacity>
@@ -38,9 +38,15 @@ const NavBar: React.FC<NavBarProps> = ({ title = "SkiMate" }) => {
             {/* Bouton Settings */}
             <Link href="/settings" asChild>
                 <TouchableOpacity style={styles.iconContainer}>
-                    <FontAwesome6 name="gear" size={24} color="#fff" />
+                    <Ionicons name="settings-sharp" size={24} color="#fff" />
                 </TouchableOpacity>
             </Link>
+            {/*/!* Bouton Meteo *!/*/}
+            {/*<Link href="/weather" asChild>*/}
+            {/*    <TouchableOpacity style={styles.iconContainer}>*/}
+            {/*        <Ionicons name="settings-sharp" size={24} color="#fff" />*/}
+            {/*    </TouchableOpacity>*/}
+            {/*</Link>*/}
             <Link href="/resort" asChild>
                 <TouchableOpacity style={styles.iconContainer}>
                     <FontAwesome6 name="house" size={24} color="#fff" />
