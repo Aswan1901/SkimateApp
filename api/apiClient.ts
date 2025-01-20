@@ -20,12 +20,16 @@ let isRefreshing = false;
 let failedQueue: any[] = [];
 
 const refreshToken = async () => {
+    let refresh_token :string  | null = null;
+
     if (Platform.OS === 'web') {
-        const refresh_token = await AsyncStorage.getItem('refresh_token');
-        if (!refresh_token) throw new Error('No refresh token');
+        refresh_token = await AsyncStorage.getItem('refresh_token');
     }else {
-        const refresh_token = await SecureStore.getItemAsync('refresh_token');
-        if (!refresh_token) throw new Error('No refresh token');
+        refresh_token = await SecureStore.getItemAsync('refresh_token');
+    }
+
+    if (!refresh_token) {
+        throw new Error('Refresh token non trouvé.');
     }
 
     const response = await axios.post(`${API_URL}/api/token/refresh`, { refresh_token });

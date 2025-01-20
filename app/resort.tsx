@@ -5,24 +5,6 @@ import apiClient from "@/api/apiClient";
 
 const ResortScreen = () => {
 
-    const [note, setNotes] = useState<number>();
-    const [comment, setComment] = useState<string>();
-    const [user, setUser] = useState<string>();
-    const [loading, setLoading] = useState(false);
-
-    useEffect(() => {
-        const fetchComment = async ()=>{
-            const url = '/comments';
-            try {
-                const response = await apiClient.get(url);
-                setComment(response.data);
-            }catch (error) {
-                console.error(error.message);
-            }
-            setLoading(false);
-            };
-        fetchComment();
-    }, []);
 
 
     return (
@@ -37,7 +19,7 @@ const ResortScreen = () => {
                     <Text style={styles.notes}>Note : 5/5</Text>
                     <Text style={styles.weather}>Météo : Ensoleillé, -5°C</Text>
                 </View>
-                <View style={styles.description}>g
+                <View style={styles.description}>
                     <Text style={styles.descriptionText}>
                         Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                     </Text>
