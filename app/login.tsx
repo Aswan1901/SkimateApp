@@ -7,13 +7,14 @@ import {
     StyleSheet,
     ImageBackground,
     Alert,
+    Platform
 } from 'react-native';
 import axios from 'axios';
 import { useRouter, Link } from 'expo-router';
 import Constants from 'expo-constants';
 import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Platform } from 'react-native';
+
 
 const LoginScreen: React.FC = () => {
     let API_URL = 'http://localhost:8000/';

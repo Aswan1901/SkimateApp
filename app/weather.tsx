@@ -6,7 +6,7 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
-const { width } = Dimensions.get('window'); // Get screen width
+const { width } = Dimensions.get('window');
 
 const WeatherScreen: React.FC = () => {
 
@@ -184,7 +184,7 @@ const WeatherScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
     container: {
-        padding: width < 400 ? 8 : 12, // Decrease padding for smaller screens
+        padding: width < 400 ? 8 : 12,
     },
     background: {
         flex: 1,
@@ -194,17 +194,17 @@ const styles = StyleSheet.create({
     },
     containerTop: {
         alignItems: "center",
-        marginVertical: width < 400 ? 10 : 20, // Adjust vertical margin based on screen width
+        marginVertical: width < 400 ? 10 : 20,
     },
     temperature: {
-        fontSize: width < 400 ? 50 : 60, // Decrease font size for smaller screens
+        fontSize: width < 400 ? 50 : 60,
         fontWeight: 'bold',
         color: '#fff',
         textAlign: 'center',
     },
     title: {
         fontWeight: 'bold',
-        fontSize: width < 400 ? 18 : 20, // Adjust title font size
+        fontSize: width < 400 ? 18 : 20,
         textAlign: 'center',
     },
     cardsContainer: {
