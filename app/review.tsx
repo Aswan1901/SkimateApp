@@ -17,7 +17,7 @@ import * as SecureStore from 'expo-secure-store';
 
 const ReviewScreen = () => {
 
-    const [comments, setComments] = useState([]);
+    const [comments, setComments] = useState<Comment[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [newComment, setNewComment] = useState('');
@@ -86,7 +86,6 @@ const ReviewScreen = () => {
         <View style={styles.container}>
             <View style={styles.stationInfo}>
                 <Text style={styles.stationName}>La Plagne</Text>
-                <Text style={styles.weather}>Météo : Ensoleillé, -5°C</Text>
             </View>
             <ScrollView style={styles.reviewContainer}>
                 <Text style={styles.sectionTitle}>Avis :</Text>
@@ -111,20 +110,8 @@ const ReviewScreen = () => {
             </ScrollView>
 
             <View style={styles.leaveReviewContainer}>
+
                 <Text style={styles.sectionTitle}>Laisser un avis</Text>
-                <TextInput
-                    style={styles.inputTitle}
-                    placeholder="Titre..."
-                    value={title}
-                    onChangeText={setTitle}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Message..."
-                    multiline
-                    value={newComment}
-                    onChangeText={setNewComment}
-                />
                 <View style={styles.ratingContainer}>
                     <TouchableOpacity onPress={() => setStarRating(1)}>
                         <AntDesign
@@ -157,6 +144,20 @@ const ReviewScreen = () => {
                         />
                     </TouchableOpacity>
                 </View>
+                <TextInput
+                    style={styles.inputTitle}
+                    placeholder="Titre..."
+                    value={title}
+                    onChangeText={setTitle}
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Message..."
+                    multiline
+                    value={newComment}
+                    onChangeText={setNewComment}
+                />
+
                 <TouchableOpacity style={styles.submitButton} onPress={handleAddComment}>
                     <Text style={styles.submitButtonText}>Enregistrer</Text>
                 </TouchableOpacity>
@@ -228,7 +229,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffffff',
         borderRadius: 10,
         padding: 15,
-        height: 20,
+        height: 50,
         textAlignVertical: 'top',
         marginBottom: 15,
         elevation: 2,
@@ -251,7 +252,7 @@ const styles = StyleSheet.create({
     rating:{
         color:'#fcdd53',
         marginLeft:3,
-        fontSize:15,
+        fontSize:20,
     },
     ratingContainer: {
         marginBottom:5,
