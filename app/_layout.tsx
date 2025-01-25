@@ -1,5 +1,5 @@
 // app/_layout.tsx
-import { ThemeProvider } from '@react-navigation/native';
+import {NavigationContainer, ThemeProvider} from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Slot, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -45,8 +45,7 @@ export default function Layout() {
       <SafeAreaProvider>
         <ThemeProvider value={navigationTheme}>
           <SafeAreaView style={[styles.container, { backgroundColor }]}>
-            <Slot />
-
+              <Slot />
             {/* NavBar globale en bas, sauf si "hideNavbar" */}
             {!hideNavbar && <NavBar />}
           </SafeAreaView>

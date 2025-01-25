@@ -28,7 +28,6 @@ type CollapsibleHeaderProps = {
     /** Style additionnel pour le container */
     containerStyle?: StyleProp<ViewStyle>;
     /** Style additionnel pour le texte */
-    textStyle?: StyleProp<TextStyle>;
 };
 
 export default function CollapsibleHeader({
@@ -38,9 +37,9 @@ export default function CollapsibleHeader({
                                               maxFontSize = 24,
                                               minFontSize = 18,
                                               title = "Mon Titre",
-                                              containerStyle = (useThemeColor({}, 'background') as StyleProp<ViewStyle>),
-                                              textStyle = (useThemeColor({}, 'text') as StyleProp<TextStyle>),
                                           }: CollapsibleHeaderProps) {
+    let textStyle = (useThemeColor({}, 'text'))
+    let containerStyle = (useThemeColor({}, 'background'));
     // Interpolation de la hauteur
     const headerHeight = scrollY.interpolate({
         inputRange: [0, 50],
@@ -56,12 +55,12 @@ export default function CollapsibleHeader({
     });
 
     if(Platform.OS === "web" ){
-        containerStyle= { backgroundColor: "#f2f4f7" };
-        textStyle =  { color: "#11181C" };
+        containerStyle= "#f2f4f7";
+        textStyle =  "#11181C";
     }
     return (
-        <Animated.View style={[styles.header, containerStyle, {height: headerHeight}, ]}>
-            <Animated.Text style={[styles.title, textStyle, {fontSize: titleFontSize}]}>
+        <Animated.View style={[styles.header, {backgroundColor: containerStyle}, {height: headerHeight}, ]}>
+            <Animated.Text style={[styles.title, {color: textStyle}, {fontSize: titleFontSize}]}>
                 {title}
             </Animated.Text>
         </Animated.View>

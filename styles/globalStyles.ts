@@ -17,9 +17,9 @@ export const globalStyles = StyleSheet.create({
     // Style commun pour les cartes
     card: {
         width: '85%',
-        marginBottom: 15,  // Séparation verticale de 15px
+        marginBottom: 40,  // Séparation verticale de 15px
         padding: 15,       // Un peu de padding interne
-        borderRadius: 8,   // Coins arrondis
+        borderRadius: 15,   // Coins arrondis
 
         // Ombrés (Shadow) iOS
         shadowColor: '#000',
