@@ -13,11 +13,12 @@ import apiClient from "@/api/apiClient";
 import { AntDesign } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from 'expo-secure-store';
+import { decode } from "react-native-pure-jwt";
 
 
 const ReviewScreen = () => {
 
-    const [comments, setComments] = useState<Comment[]>([]);
+    const [comments, setComments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [newComment, setNewComment] = useState('');
@@ -55,52 +56,65 @@ const ReviewScreen = () => {
     }, []);
 
     const handleAddComment = async () => {
-
-        let userToken;
-
-        if(Platform.OS === 'web'){
-            userToken = await AsyncStorage.getItem('token');
-        }else if(Platform.OS === 'android'){
-            userToken = await SecureStore.getItemAsync('token');
-        }
-
-        const url = '/comment/add';
-        const newCommentData = {
-            title: title,
-            comment: newComment,
-            note: starRating,
-            userToken: userToken
-        };
-
         try {
-            const response = await apiClient.post(url, newCommentData);
-            setComments([response.data, ...comments]);
-            setNewComment('');
-            setStarRating(0);
+
+            const userToken = Platform.OS === 'web'
+                ? await AsyncStorage.getItem('token')
+                : await SecureStore.getItemAsync('token');
+
+            if (!userToken) {
+                setError('Utilisateur non authentifié.');
+                return;
+            }
+
+            const url = '/comment/add';
+            const newCommentData = {
+                title: title,
+                comment: newComment,
+                note: starRating,
+                userToken: userToken,
+            };
+
+            const response = await apiClient.post(url, newCommentData, {
+                headers: {
+                    Authorization: `Bearer ${userToken}`,
+                },
+            });
+            if (response.status === 201) {
+                setComments((prevComments) => [response.data, ...prevComments]);
+                setNewComment('');
+                setTitle('');
+                setStarRating(0);
+            } else {
+                setError('Une erreur s\'est produite lors de l\'ajout du commentaire.');
+            }
         } catch (error) {
-            console.log(error);
-            setError('Impossible d\'ajouter le commentaire.');
+            if (error.response && error.response.data) {
+                setError(error.response.data.error || 'Une erreur s\'est produite.');
+            } else {
+                setError('Impossible d\'ajouter le commentaire.');
+            }
+            console.error('Add Comment Error:', error);
         }
     };
+
     return (
         <View style={styles.container}>
             <View style={styles.stationInfo}>
                 <Text style={styles.stationName}>La Plagne</Text>
+                <Text style={styles.weather}>Météo : Ensoleillé, -5°C</Text>
             </View>
             <ScrollView style={styles.reviewContainer}>
                 <Text style={styles.sectionTitle}>Avis :</Text>
                 {loading ? (
                     <ActivityIndicator size="small" color="#003566" />
-                ) : comments.length > 0 ? (
-                    comments.map((comment) => (
+                ) : comments.length > 0 ? ( comments.map((comment) => (
                         <View style={styles.review} key={comment.id}>
                             <Text style={styles.username}>
                                 {comment.user && comment.user.firstname ? comment.user.firstname : 'Anonyme'}
                                 {showRating(comment.note)}
                             </Text>
-                            <Text>
-                                {comment.title}
-                            </Text>
+                            <Text>{comment.title}</Text>
                             <Text style={styles.reviewText}>{comment.description}</Text>
                         </View>
                     ))
@@ -108,10 +122,21 @@ const ReviewScreen = () => {
                     <Text style={styles.errorText}>{error}</Text>
                 )}
             </ScrollView>
-
             <View style={styles.leaveReviewContainer}>
-
                 <Text style={styles.sectionTitle}>Laisser un avis</Text>
+                <TextInput
+                    style={styles.inputTitle}
+                    placeholder="Titre..."
+                    value={title}
+                    onChangeText={setTitle}
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Message..."
+                    multiline
+                    value={newComment}
+                    onChangeText={setNewComment}
+                />
                 <View style={styles.ratingContainer}>
                     <TouchableOpacity onPress={() => setStarRating(1)}>
                         <AntDesign
@@ -144,20 +169,6 @@ const ReviewScreen = () => {
                         />
                     </TouchableOpacity>
                 </View>
-                <TextInput
-                    style={styles.inputTitle}
-                    placeholder="Titre..."
-                    value={title}
-                    onChangeText={setTitle}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Message..."
-                    multiline
-                    value={newComment}
-                    onChangeText={setNewComment}
-                />
-
                 <TouchableOpacity style={styles.submitButton} onPress={handleAddComment}>
                     <Text style={styles.submitButtonText}>Enregistrer</Text>
                 </TouchableOpacity>

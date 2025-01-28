@@ -14,17 +14,18 @@ import {useRouter} from "expo-router";
 import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from 'react-native';
+import apiClient from "@/api/apiClient";
 
 
 const  SettingScreen: React.FC = () => {
 
     const [email, setEmail] = useState<string>('');
-    const [prenom, setPrenom] = useState<string>('');
-    const [nom, setNom] = useState<string>('');
-    const [telephone, setTelephone] = useState<string>('');
+    const [name, setName] = useState<string>('');
+    const [lastname, setLastname] = useState<string>('');
+    const [phoneNumber, setphoneNumber] = useState<string>('');
     const [isPressed, setIsPressed] = useState<string | null>(null);
     // const [success, setSuccess] = useState<string | null>(null);
-    // const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
 
     const router = useRouter();
@@ -32,30 +33,32 @@ const  SettingScreen: React.FC = () => {
         setIsPressed(button);
     }
 
-    // const handleUpdate = ()=>{
-    //     axios.put(`http://localhost:8000/api/admin/utilisateur/edit/${userId}`, {
-    //
-    //             email,
-    //             firstName: prenom,
-    //             lastName: nom,
-    //             phoneNumber: telephone,
-    //         },
-    //         {
-    //             headers:{
-    //                 Authorization: `Bearer ${token}`,
-    //             },
-    //         })
-    //         .then(response => {
-    //             console.log(response.data);
-    //             setSuccess(true);
-    //             setError(false);
-    //         })
-    //         .catch(err => {
-    //             console.error(err.response);
-    //             setSuccess(false);
-    //             setError(true);
-    //         })
-    // }
+    const handleUpdate = async ()=>{
+        try {
+            const userToken = Platform.OS === 'web' ?
+                await AsyncStorage.getItem('token') :
+                await SecureStore.getItemAsync('token');
+
+            if(!userToken){
+                setError('utilisateur non trouvé')
+                return;
+            }
+
+            const response = await apiClient.put(`utilisateur/edit/${userToken}`, {
+                email: email,
+                name:name,
+                lastname: lastname,
+                phoneNumber: phoneNumber,
+            })
+
+        }catch (error){
+            if (error.response && error.response.data){
+                setError(error.response.data || 'Une erreur est survenue.');
+            }else {
+                setError('Impossible d\'enregistré les données.')
+            }
+        }
+    }
 
     const handleLogout = async () => {
         try {
@@ -115,7 +118,7 @@ const  SettingScreen: React.FC = () => {
                                 placeholder="Prenom"
                                 onChangeText={setPrenom}
                                 placeholderTextColor="#000000"
-                                value={prenom}
+                                value={name}
                             />
                             <TouchableOpacity><AntDesign style={styles.editBtn} name="edit"/></TouchableOpacity>
                         </View>
@@ -213,10 +216,12 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingTop: 120
     },
     skiLevelText: {
         color: '#000',
+        marginBottom:30,
+        fontWeight: 'bold',
+        fontSize: 18,
     },
     inputContainer: {
         marginBottom: 20,
@@ -308,6 +313,6 @@ const styles = StyleSheet.create({
     iconLogout:{
         paddingLeft:5,
         fontSize:12
-    }
+    },
 })
 export default SettingScreen
