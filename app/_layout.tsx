@@ -37,9 +37,11 @@ export default function Layout() {
   return (
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <View style={styles.container}>
-          <Slot /> {/* Expo Router charge automatiquement les pages */}
-          {/*{!hideNavbar && <NavBar />}*/}
-          <NavBar />
+          <Slot />
+          <View style={styles.nav}>
+            {!hideNavbar && <NavBar />}
+          </View>
+
         </View>
         <StatusBar style="auto" />
       </ThemeProvider>
@@ -49,5 +51,12 @@ export default function Layout() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  nav: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+
   },
 });

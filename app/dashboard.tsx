@@ -7,7 +7,6 @@ import {
 } from "react-native";
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { Link } from 'expo-router';
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Dashboard() {
 
@@ -71,7 +70,7 @@ export default function Dashboard() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#E5E5E5",
+
     },
     background: {
         flex: 1,
@@ -80,7 +79,7 @@ const styles = StyleSheet.create({
         opacity: 0.5,
     },
     profile: {
-        backgroundColor: "#add8e6",
+        backgroundColor: "#D6E6F2",
         padding: 20,
     },
     header: {
@@ -89,14 +88,14 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     button: {
-        backgroundColor: "#ffffff",
+        backgroundColor: "#fff",
         paddingVertical: 5,
         paddingHorizontal: 15,
         borderRadius: 20,
     },
     iconPerson: {
         fontSize: 80,
-        color: '#ffffff',
+        color: '#fff',
     },
     buttonText: {
         fontSize: 12,
@@ -117,7 +116,7 @@ const styles = StyleSheet.create({
         color: "#fff",
     },
     titleContainer: {
-        borderBottomColor: "#0a0647",
+        borderBottomColor: "#0A3A5D",
         backgroundColor: "#fff",
         height: 50,
         borderBottomWidth: 3,
@@ -137,7 +136,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     icon: {
-        backgroundColor: "#0a0647",
+        backgroundColor: "#0A3A5D",
         padding: 15,
         borderRadius: 50,
         marginBottom: 5,
@@ -145,7 +144,7 @@ const styles = StyleSheet.create({
         color: '#fff',
     },
     navIcon: {
-        backgroundColor: "#0a0647",
+        backgroundColor: "#0A3A5D",
         padding: 15,
         borderRadius: 50,
         marginBottom: 5,
@@ -153,7 +152,6 @@ const styles = StyleSheet.create({
         color: 'red',
     },
     label: {
-        color: "#000",
         fontSize: 12,
         textAlign: "center",
     },

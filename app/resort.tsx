@@ -1,5 +1,5 @@
 import React,{useEffect, useState} from 'react';
-import { View, Text, StyleSheet, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, ScrollView } from 'react-native';
 import {Link} from "expo-router";
 import apiClient from "@/api/apiClient";
 
@@ -13,7 +13,7 @@ const ResortScreen = () => {
             style={styles.background}
             imageStyle={styles.backgroundImage}
         >
-            <View style={styles.container}>
+            <ScrollView style={styles.container}>
                 <View style={styles.topSection}>
                     <Text style={styles.resortName}>La Plagne</Text>
                     <Text style={styles.notes}>Note : 5/5</Text>
@@ -51,7 +51,7 @@ const ResortScreen = () => {
                     </View>
                 </View>
                 <Link href='/review' style={styles.reviewLink}>Laisser un avis</Link>
-            </View>
+            </ScrollView>
         </ImageBackground>
     );
 };
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     backgroundImage: {
         opacity: 0.5,
     },
-    // Top Section
+
     topSection: {
         marginBottom: 20,
         alignItems: 'center',
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     resortName: {
         fontSize: 22,
         fontWeight: 'bold',
-        color: '#2e3b4e',
+        color: '#0A3A5D',
         marginBottom: 10,
     },
     notes: {
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         color: '#ffffff',
-        backgroundColor: '#2e3b4e',
+        backgroundColor: '#0A3A5D',
         paddingVertical: 10,
         borderRadius: 8,
         marginBottom: 20,
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     sectionHeader: {
         fontSize: 14,
         fontWeight: 'bold',
-        color: '#333',
+        color: '#75C9C8',
         marginBottom: 10,
         textAlign: 'center',
     },
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     },
     verticalLine: {
         width: 1,
-        backgroundColor: '#333',
+        backgroundColor: '#75C9C8',
         marginHorizontal: 10,
     },
     reviewLink:{

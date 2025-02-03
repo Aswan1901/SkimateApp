@@ -13,7 +13,6 @@ import apiClient from "@/api/apiClient";
 import { AntDesign } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from 'expo-secure-store';
-import { decode } from "react-native-pure-jwt";
 
 
 const ReviewScreen = () => {
@@ -114,7 +113,7 @@ const ReviewScreen = () => {
                                 {comment.user && comment.user.firstname ? comment.user.firstname : 'Anonyme'}
                                 {showRating(comment.note)}
                             </Text>
-                            <Text>{comment.title}</Text>
+                            <Text style={styles.reviewTitle}>{comment.title}</Text>
                             <Text style={styles.reviewText}>{comment.description}</Text>
                         </View>
                     ))
@@ -180,8 +179,10 @@ const ReviewScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#e0f7fa',
+        backgroundColor: '#D6E6F2',
         padding: 20,
+        marginBottom: 60,
+
     },
     stationInfo: {
         marginBottom: 20,
@@ -190,12 +191,13 @@ const styles = StyleSheet.create({
     stationName: {
         fontSize: 22,
         fontWeight: 'bold',
-        color: '#2e3b4e',
+        color: '#0A3A5D',
     },
     weather: {
         fontSize: 16,
-        color: '#333',
+        color: '#0A3A5D',
         marginTop: 5,
+
     },
     reviewContainer: {
         marginBottom: 20,
@@ -203,7 +205,7 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#2e3b4e',
+        color: '#0A3A5D',
         marginBottom: 10,
     },
     review: {
@@ -216,12 +218,15 @@ const styles = StyleSheet.create({
     username: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: '#333',
         marginBottom: 5,
     },
     reviewText: {
         fontSize: 14,
-        color: '#666',
+        lineHeight: 20,
+    },
+    reviewTitle: {
+        fontSize: 14,
+        color: '#0A3A5D',
         lineHeight: 20,
     },
     leaveReviewContainer: {
@@ -246,7 +251,7 @@ const styles = StyleSheet.create({
         elevation: 2,
     },
     submitButton: {
-        backgroundColor: '#2e3b4e',
+        backgroundColor: '#0A3A5D',
         borderRadius: 10,
         alignItems: 'center',
         paddingVertical: 10,

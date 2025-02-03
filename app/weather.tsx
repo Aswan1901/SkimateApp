@@ -206,6 +206,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: width < 400 ? 18 : 20,
         textAlign: 'center',
+        color:'#0A3A5D'
     },
     cardsContainer: {
         flexDirection: 'row',
@@ -213,7 +214,7 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
     },
     weatherCard: {
-        backgroundColor: '#ffffff',
+        backgroundColor: '#fff',
         flex: 1,
         marginHorizontal: 5,
         padding: width < 400 ? 8 : 15,
@@ -235,7 +236,7 @@ const styles = StyleSheet.create({
     },
     forecastCard: {
         padding: 13,
-        backgroundColor: '#ffffff',
+        backgroundColor: '#fff',
         borderRadius: 10,
         elevation: 5,
         opacity: 0.8,
@@ -243,7 +244,7 @@ const styles = StyleSheet.create({
     },
     snowForecastCard: {
         padding: 10,
-        backgroundColor: '#ffffff',
+        backgroundColor: '#fff',
         borderRadius: 10,
         elevation: 5,
         opacity: 0.8,
@@ -303,7 +304,8 @@ const styles = StyleSheet.create({
     },
     weatherIcon: {
         marginRight: 3,
-    },
+        color:'#75C9C8',
+},
     cardHeader: {
         flexDirection: 'row',
         alignItems: 'center',
