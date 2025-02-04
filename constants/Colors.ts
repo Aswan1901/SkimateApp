@@ -17,7 +17,7 @@ export const Colors = {
     tabIconDefault: '#687076',
     tabIconSelected: tintColorLight,
     separator: '#D1D5DB',     // Couleur de séparateur (ex: lignes, bordures)
-    card: '#FFFFFF',          // Couleur pour des cartes/containers si besoin
+    card: '#FFFFFF',        // Couleur pour des cartes/containers si besoin
   },
   dark: {
     text: '#11181C',

@@ -16,6 +16,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from 'react-native';
 import apiClient from "@/api/apiClient";
 import {useThemeColor} from "@/hooks/useThemeColor";
+import { router } from 'expo-router';
 
 
 const  SettingScreen: React.FC = () => {
@@ -189,7 +190,7 @@ const  SettingScreen: React.FC = () => {
                            {/*</SelectDropdown>*/}
 
                            <TouchableOpacity style={styles.adminBtn}>
-                               <Text style={{ color: text }}>Contacter un admin</Text>
+                               <Text style={{ color: text }} onPress={()=> router.push('/chat')}>Contacter un admin</Text>
                            </TouchableOpacity>
                            <TouchableOpacity style={styles.logoutBtn}>
                                <Text style={[styles.logoutBtnText,{color:whiteText}]} onPress={handleLogout}> Déconnexion</Text>
