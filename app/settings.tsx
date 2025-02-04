@@ -14,48 +14,54 @@ import {useRouter} from "expo-router";
 import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from 'react-native';
+import apiClient from "@/api/apiClient";
+import {useThemeColor} from "@/hooks/useThemeColor";
+import { router } from 'expo-router';
 
 
 const  SettingScreen: React.FC = () => {
 
     const [email, setEmail] = useState<string>('');
-    const [prenom, setPrenom] = useState<string>('');
-    const [nom, setNom] = useState<string>('');
-    const [telephone, setTelephone] = useState<string>('');
+    const [name, setName] = useState<string>('');
+    const [lastname, setLastname] = useState<string>('');
+    const [phoneNumber, setphoneNumber] = useState<string>('');
     const [isPressed, setIsPressed] = useState<string | null>(null);
     // const [success, setSuccess] = useState<string | null>(null);
-    // const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
-
+    const text = useThemeColor({}, 'text');
+    const whiteText = useThemeColor({}, 'whiteText');
     const router = useRouter();
     const handlePress=(button: string)=>{
         setIsPressed(button);
     }
 
-    // const handleUpdate = ()=>{
-    //     axios.put(`http://localhost:8000/api/admin/utilisateur/edit/${userId}`, {
-    //
-    //             email,
-    //             firstName: prenom,
-    //             lastName: nom,
-    //             phoneNumber: telephone,
-    //         },
-    //         {
-    //             headers:{
-    //                 Authorization: `Bearer ${token}`,
-    //             },
-    //         })
-    //         .then(response => {
-    //             console.log(response.data);
-    //             setSuccess(true);
-    //             setError(false);
-    //         })
-    //         .catch(err => {
-    //             console.error(err.response);
-    //             setSuccess(false);
-    //             setError(true);
-    //         })
-    // }
+    const handleUpdate = async ()=>{
+        try {
+            const userToken = Platform.OS === 'web' ?
+                await AsyncStorage.getItem('token') :
+                await SecureStore.getItemAsync('token');
+
+            if(!userToken){
+                setError('utilisateur non trouvé')
+                return;
+            }
+
+            const response = await apiClient.put(`utilisateur/edit/${userToken}`, {
+                email: email,
+                name:name,
+                lastname: lastname,
+                phoneNumber: phoneNumber,
+            })
+
+        }catch (error){
+            if (error.response && error.response.data){
+                setError(error.response.data || 'Une erreur est survenue.');
+            }else {
+                setError('Impossible d\'enregistré les données.')
+            }
+        }
+    }
 
     const handleLogout = async () => {
         try {
@@ -93,10 +99,9 @@ const  SettingScreen: React.FC = () => {
                 imageStyle={styles.backgroundImage}
             >
                 <View style={styles.container}>
-                    <Text style={styles.skiLevelText}>
+                    <Text style={[styles.skiLevelText, {color:text}]}>
                         Niveau de ski: Intermédiaire
                     </Text>
-
                     <View>
                         <View style={styles.inputContainer}>
                             <TextInput
@@ -113,9 +118,9 @@ const  SettingScreen: React.FC = () => {
                             <TextInput
                                 style={styles.input}
                                 placeholder="Prenom"
-                                onChangeText={setPrenom}
+                                // onChangeText={setPrenom}
                                 placeholderTextColor="#000000"
-                                value={prenom}
+                                value={name}
                             />
                             <TouchableOpacity><AntDesign style={styles.editBtn} name="edit"/></TouchableOpacity>
                         </View>
@@ -123,9 +128,9 @@ const  SettingScreen: React.FC = () => {
                             <TextInput
                                 style={styles.input}
                                 placeholder="Nom"
-                                onChangeText={setNom}
+                                // onChangeText={setNom}
                                 placeholderTextColor="#000000"
-                                value={nom}
+                                // value={nom}
                             />
                             <TouchableOpacity><AntDesign style={styles.editBtn} name="edit"/></TouchableOpacity>
                         </View>
@@ -133,34 +138,33 @@ const  SettingScreen: React.FC = () => {
                             <TextInput
                                 style={styles.input}
                                 placeholder="Telephone"
-                                onChangeText={setTelephone}
+                                // onChangeText={setTelephone}
                                 placeholderTextColor="#000000"
-                                value={telephone}
+                                // value={telephone}
                                 keyboardType="phone-pad"
                             />
                             <TouchableOpacity><AntDesign style={styles.editBtn} name="edit"/></TouchableOpacity>
                         </View>
 
                         <View>
-                            <Text>Type de ski</Text>
+                            <Text style={[styles.text,{color: text}]}>Type de ski</Text>
                             <View style={styles.containerPreference}>
                                 <TouchableOpacity
-                                    style={[styles.button, isPressed === 'Piste' ? styles.buttonPressed : null ]} onPress={()=>handlePress("Piste")}>
-                                    <Text style={[styles.buttonText, isPressed === "Piste" ? styles.buttonPressedText : null]} onPress={()=>handlePress("Piste")}>Piste</Text>
-
+                                    style={[styles.button, isPressed === 'piste' ? styles.buttonPressed : null ]} onPress={()=>handlePress("piste")}>
+                                    <Text style={[styles.buttonText, isPressed === "piste" ? styles.buttonPressedText : null]} onPress={()=>handlePress("piste")}>Piste</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.button2, isPressed === 'hors-piste' ? styles.buttonPressed : null ]} onPress={()=>handlePress("hors-piste")}>
-                                    <Text style={[styles.buttonText, isPressed === "hors-piste" ? styles.buttonPressedText : null]} onPress={()=>handlePress("hors-piste")}>hors-piste</Text>
+                                    <Text style={[styles.buttonText, isPressed === "hors-piste" ? styles.buttonPressedText : null]} onPress={()=>handlePress("hors-piste")}>Hors-piste</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.button3, isPressed === 'freestyle' ? styles.buttonPressed : null ]} onPress={()=>handlePress("freestyle")}>
-                                    <Text style={[styles.buttonText, isPressed === "freestyle" ? styles.buttonPressedText : null]} onPress={()=>handlePress("freestyle")}>Piste</Text>
+                                    <Text style={[styles.buttonText, isPressed === "freestyle" ? styles.buttonPressedText : null]} onPress={()=>handlePress("freestyle")}>Freestyle</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
                         <View>
-                            <Text>Niveau de difficulté</Text>
+                            <Text style={[styles.text,{color: text}]}>Niveau de difficulté</Text>
                             <View style={styles.containerPreference}>
                                 <TouchableOpacity
                                     style={[styles.button, isPressed === 'Vert' ? styles.buttonPressed : null ]} onPress={()=>handlePress("Vert")}>
@@ -186,10 +190,10 @@ const  SettingScreen: React.FC = () => {
                            {/*</SelectDropdown>*/}
 
                            <TouchableOpacity style={styles.adminBtn}>
-                               <Text>Contacter un admin</Text>
+                               <Text style={{ color: text }} onPress={()=> router.push('/chat')}>Contacter un admin</Text>
                            </TouchableOpacity>
                            <TouchableOpacity style={styles.logoutBtn}>
-                               <Text style={styles.logoutBtnText} onPress={handleLogout}> Déconnexion</Text>
+                               <Text style={[styles.logoutBtnText,{color:whiteText}]} onPress={handleLogout}> Déconnexion</Text>
                            </TouchableOpacity>
                        </View>
                     </View>
@@ -202,6 +206,7 @@ const  SettingScreen: React.FC = () => {
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
+
     },
     background: {
         flex: 1,
@@ -213,10 +218,13 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingTop: 120
+        marginBottom:50,
+
     },
     skiLevelText: {
-        color: '#000',
+        marginBottom:30,
+        fontWeight: 'bold',
+        fontSize: 18,
     },
     inputContainer: {
         marginBottom: 20,
@@ -237,9 +245,8 @@ const styles = StyleSheet.create({
         fontSize:16
     },
     button: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#fff',
         paddingVertical: 10,
-        // paddingLeft:10,
         borderBottomLeftRadius: 25,
         borderTopLeftRadius: 25,
         alignItems: 'center',
@@ -247,7 +254,7 @@ const styles = StyleSheet.create({
         width:80,
     },
     button2: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#fff',
         paddingVertical: 10,
         paddingLeft:10,
         alignItems: 'center',
@@ -255,22 +262,20 @@ const styles = StyleSheet.create({
         width:90,
     },
     button3: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#fff',
         paddingVertical: 10,
-        // paddingLeft:10,
         borderBottomRightRadius: 25,
         borderTopRightRadius: 25,
         alignItems: 'center',
         marginTop: 20,
         width:80,
-        paddingRight:10,
     },
     buttonText: {
-        color: '#003566',
+        color: '#0A3A5D',
         fontSize: 16,
     },
     buttonPressed:{
-        backgroundColor:'#003566',
+        backgroundColor:'#0A3A5D',
         color:'#fff'
     },
     buttonPressedText:{
@@ -281,7 +286,7 @@ const styles = StyleSheet.create({
         justifyContent:'center',
     },
     adminBtn:{
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#fff',
         paddingVertical: 10,
         marginTop: 20,
         width:200,
@@ -308,6 +313,12 @@ const styles = StyleSheet.create({
     iconLogout:{
         paddingLeft:5,
         fontSize:12
-    }
+    },
+    text:{
+        marginTop:20,
+        fontWeight:'bold',
+        textTransform:"uppercase",
+        color:"#0A3A5D"
+    },
 })
 export default SettingScreen

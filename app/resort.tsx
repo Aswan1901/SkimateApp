@@ -1,11 +1,12 @@
-import React,{useEffect, useState} from 'react';
-import { View, Text, StyleSheet, ImageBackground } from 'react-native';
-import {Link} from "expo-router";
-import apiClient from "@/api/apiClient";
+import { View, Text, TouchableOpacity, ScrollView, ImageBackground, StyleSheet } from 'react-native';
+import { useThemeColor } from '../hooks/useThemeColor';
+import { router } from 'expo-router';
 
 const ResortScreen = () => {
-
-
+    // Theme-based colors
+    const titleContainer = useThemeColor({}, 'containerHeader');
+    const text = useThemeColor({}, 'text');
+    const whiteText = useThemeColor({}, 'whiteText');
 
     return (
         <ImageBackground
@@ -13,45 +14,57 @@ const ResortScreen = () => {
             style={styles.background}
             imageStyle={styles.backgroundImage}
         >
-            <View style={styles.container}>
+            <ScrollView style={styles.container}>
                 <View style={styles.topSection}>
-                    <Text style={styles.resortName}>La Plagne</Text>
-                    <Text style={styles.notes}>Note : 5/5</Text>
-                    <Text style={styles.weather}>Météo : Ensoleillé, -5°C</Text>
+                    <Text style={[styles.resortName, { color: text }]}>La Plagne</Text>
+                    <Text style={[styles.notes, { color: text }]}>Note : 5/5</Text>
+                    <Text style={[styles.weather, { color: text }]}>Météo : Ensoleillé, -5°C</Text>
                 </View>
+
                 <View style={styles.description}>
-                    <Text style={styles.descriptionText}>
+                    <Text style={[styles.descriptionText, { color: text }]}>
                         Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                     </Text>
                 </View>
-                <Text style={styles.title}>Infrastructure de la station</Text>
+
+                <Text style={[styles.title, { backgroundColor: titleContainer, color: whiteText }]}>
+                    Infrastructure de la station
+                </Text>
+
                 <View style={styles.resortInfoContainer}>
                     <View style={styles.section}>
-                        <Text style={styles.sectionHeader}>Type de Remontée mécanique</Text>
-                        <View style={styles.pisteInfo}>
-                            <Text style={styles.pisteText}>Telesiege 15</Text>
-                        </View>
-                        <View style={styles.pisteInfo}>
-                            <Text style={styles.pisteText}>Télécabine 20</Text>
-                        </View>
-                        <View style={styles.pisteInfo}>
-                            <Text style={styles.pisteText}>Tire fesse 9</Text>
-                        </View>
+                        <Text style={[styles.sectionHeader, { color: text }]}>Type de Remontée mécanique</Text>
+                        <Text style={[styles.pisteText, { color: text }]}>Telesiege 15</Text>
+                        <Text style={[styles.pisteText, { color: text }]}>Télécabine 20</Text>
+                        <Text style={[styles.pisteText, { color: text }]}>Tire fesse 9</Text>
                     </View>
-                    <View style={styles.verticalLine} />
+
+                    <View style={[styles.verticalLine, { backgroundColor: text }]} />
+
                     <View style={styles.section}>
-                        <Text style={styles.sectionHeader}>Piste disponible</Text>
-                        <Text style={styles.pisteText}>piste 1 : ouvertes</Text>
+                        <Text style={[styles.sectionHeader, { color: text }]}>Piste disponible</Text>
+                        <Text style={styles.pisteText}>Piste 1 : ouverte</Text>
                     </View>
-                    <View style={styles.verticalLine} />
+
+                    <View style={[styles.verticalLine, { backgroundColor: text }]} />
+
                     <View style={styles.section}>
-                        <Text style={styles.sectionHeader}>Tarifs et Forfaits :</Text>
-                        <Text style={styles.pisteText}>Forfait journée : 50€</Text>
-                        <Text style={styles.pisteText}>Forfait semaine : 250€</Text>
+                        <Text style={[styles.sectionHeader, { color: text }]}>Tarifs et Forfaits :</Text>
+                        <Text style={[styles.pisteText, { color: text }]}>Forfait journée : 50€</Text>
+                        <Text style={[styles.pisteText, { color: text }]}>Forfait semaine : 250€</Text>
                     </View>
                 </View>
-                <Link href='/review' style={styles.reviewLink}>Laisser un avis</Link>
-            </View>
+
+                <View style={styles.buttonsContainer}>
+                    <TouchableOpacity onPress={() => router.push('/review')}>
+                        <Text style={[styles.linkText, { color: text }]}>Laisser un avis</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => router.push('/weather')}>
+                        <Text style={[styles.linkText, { color: text }]}>Voir la météo de la station</Text>
+                    </TouchableOpacity>
+                </View>
+
+            </ScrollView>
         </ImageBackground>
     );
 };
@@ -67,7 +80,6 @@ const styles = StyleSheet.create({
     backgroundImage: {
         opacity: 0.5,
     },
-    // Top Section
     topSection: {
         marginBottom: 20,
         alignItems: 'center',
@@ -75,7 +87,6 @@ const styles = StyleSheet.create({
     resortName: {
         fontSize: 22,
         fontWeight: 'bold',
-        color: '#2e3b4e',
         marginBottom: 10,
     },
     notes: {
@@ -85,7 +96,6 @@ const styles = StyleSheet.create({
     },
     weather: {
         fontSize: 14,
-        color: '#333',
     },
     description: {
         backgroundColor: '#ffffff',
@@ -96,24 +106,19 @@ const styles = StyleSheet.create({
     },
     descriptionText: {
         fontSize: 14,
-        color: '#333',
         textAlign: 'justify',
     },
-    // Title
     title: {
         textAlign: 'center',
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#ffffff',
-        backgroundColor: '#2e3b4e',
         paddingVertical: 10,
         borderRadius: 8,
         marginBottom: 20,
     },
-    // Resort Info
     resortInfoContainer: {
-        flexDirection: 'row',
         backgroundColor: '#ffffff',
+        flexDirection: 'row',
         borderRadius: 10,
         padding: 20,
         elevation: 4,
@@ -127,28 +132,40 @@ const styles = StyleSheet.create({
     sectionHeader: {
         fontSize: 14,
         fontWeight: 'bold',
-        color: '#333',
         marginBottom: 10,
         textAlign: 'center',
     },
-    pisteInfo: {
-        alignItems: 'center',
-        marginBottom: 10,
-    },
     pisteText: {
         fontSize: 12,
-        color: '#333',
         textAlign: 'center',
     },
     verticalLine: {
         width: 1,
-        backgroundColor: '#333',
         marginHorizontal: 10,
     },
-    reviewLink:{
-        marginTop:15,
-        fontSize:17
-    }
+    buttonsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 25,
+    },
+    linkText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginVertical: 10,
+    },
+    buttonOutlined: {
+        borderWidth: 2,
+        borderRadius: 8,
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+        alignItems: 'center',
+        marginVertical: 10,
+    },
+    buttonText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
 });
 
 export default ResortScreen;
