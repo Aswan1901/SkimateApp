@@ -15,6 +15,7 @@ import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from 'react-native';
 import apiClient from "@/api/apiClient";
+import {useThemeColor} from "@/hooks/useThemeColor";
 
 
 const  SettingScreen: React.FC = () => {
@@ -27,7 +28,8 @@ const  SettingScreen: React.FC = () => {
     // const [success, setSuccess] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
-
+    const text = useThemeColor({}, 'text');
+    const whiteText = useThemeColor({}, 'whiteText');
     const router = useRouter();
     const handlePress=(button: string)=>{
         setIsPressed(button);
@@ -96,10 +98,9 @@ const  SettingScreen: React.FC = () => {
                 imageStyle={styles.backgroundImage}
             >
                 <View style={styles.container}>
-                    <Text style={styles.skiLevelText}>
+                    <Text style={[styles.skiLevelText, {color:text}]}>
                         Niveau de ski: Intermédiaire
                     </Text>
-
                     <View>
                         <View style={styles.inputContainer}>
                             <TextInput
@@ -145,7 +146,7 @@ const  SettingScreen: React.FC = () => {
                         </View>
 
                         <View>
-                            <Text style={styles.text}>Type de ski</Text>
+                            <Text style={[styles.text,{color: text}]}>Type de ski</Text>
                             <View style={styles.containerPreference}>
                                 <TouchableOpacity
                                     style={[styles.button, isPressed === 'piste' ? styles.buttonPressed : null ]} onPress={()=>handlePress("piste")}>
@@ -162,7 +163,7 @@ const  SettingScreen: React.FC = () => {
                             </View>
                         </View>
                         <View>
-                            <Text style={styles.text}>Niveau de difficulté</Text>
+                            <Text style={[styles.text,{color: text}]}>Niveau de difficulté</Text>
                             <View style={styles.containerPreference}>
                                 <TouchableOpacity
                                     style={[styles.button, isPressed === 'Vert' ? styles.buttonPressed : null ]} onPress={()=>handlePress("Vert")}>
@@ -188,10 +189,10 @@ const  SettingScreen: React.FC = () => {
                            {/*</SelectDropdown>*/}
 
                            <TouchableOpacity style={styles.adminBtn}>
-                               <Text>Contacter un admin</Text>
+                               <Text style={{ color: text }}>Contacter un admin</Text>
                            </TouchableOpacity>
                            <TouchableOpacity style={styles.logoutBtn}>
-                               <Text style={styles.logoutBtnText} onPress={handleLogout}> Déconnexion</Text>
+                               <Text style={[styles.logoutBtnText,{color:whiteText}]} onPress={handleLogout}> Déconnexion</Text>
                            </TouchableOpacity>
                        </View>
                     </View>
@@ -245,7 +246,6 @@ const styles = StyleSheet.create({
     button: {
         backgroundColor: '#fff',
         paddingVertical: 10,
-        // paddingLeft:10,
         borderBottomLeftRadius: 25,
         borderTopLeftRadius: 25,
         alignItems: 'center',
@@ -318,7 +318,6 @@ const styles = StyleSheet.create({
         fontWeight:'bold',
         textTransform:"uppercase",
         color:"#0A3A5D"
-
     },
 })
 export default SettingScreen
