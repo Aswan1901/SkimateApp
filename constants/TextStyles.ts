@@ -12,14 +12,12 @@ export const TextStyles = StyleSheet.create({
         textAlign: 'center',
         marginHorizontal: 10,
         marginVertical: 10,
-        fontWeight: 'bold',
         fontSize:15
     },
     successText:{
         textAlign: 'center',
         marginHorizontal: 10,
         marginVertical: 10,
-        fontWeight: 'bold',
         fontSize:15
     }
 });
