@@ -1,16 +1,37 @@
-import React from 'react';
-import {View, Text, ScrollView, StyleSheet, TouchableOpacity, ImageBackground} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, ScrollView, StyleSheet, TouchableOpacity, ImageBackground, ActivityIndicator} from 'react-native';
 import { Avatar } from 'react-native-paper';
 import { Card } from '@/components/Card';
 import { Ionicons } from '@expo/vector-icons';
 import {useThemeColor} from "@/hooks/useThemeColor";
 import {router} from 'expo-router';
+import apiClient from "@/api/apiClient";
+
 
 const UserProfileScreen = () => {
+    const [userData, setUserData] = useState({user:{}});
+    const [error, setError] = useState<String | null>(null);
+    const [loading, setLoading] = useState(false);
 
     const titleContainer = useThemeColor({}, 'containerHeader');
     const text = useThemeColor({}, 'text');
     const whiteText = useThemeColor({}, 'whiteText');
+
+    useEffect(() => {
+        const fetchUserInfo = async ()=>{
+            try {
+                const response = await apiClient.get('/profile');
+                setUserData(response.data.user);
+                console.log(response.data.user.skiPreference.name);
+            }catch(error){
+                console.log(error);
+                setError('Impossible de charger les données');
+            }finally {
+                setLoading(false);
+            }
+        };
+        fetchUserInfo();
+    }, []);
 
 
     return (
@@ -21,29 +42,57 @@ const UserProfileScreen = () => {
         >
             <View style={styles.container}>
                 <Avatar.Image
-                    // source={{uri: 'https://randomuser.me/api/portraits/men/10.jpg'}}
+                    // source={{uri: ''}}
                     size={100}
                     style={styles.avatar}
                 />
-                <Text style={[styles.name, {color:whiteText}]}>John Doe</Text>
-                <Text style={[styles.email, {color:whiteText}]}>johndoe@example.com</Text>
-
-
+                {loading ? (
+                    <ActivityIndicator size="small" color="#003566" />
+                ) : userData? (
+                    <>
+                        <Text style={[styles.name, {color: whiteText}]}>
+                            {userData.firstname} {userData.lastname}
+                        </Text>
+                        <Text style={[styles.email, {color: whiteText}]}>
+                            {userData.email}
+                        </Text>
+                    </>
+                ) : (
+                    <Text style={styles.errorText}>{error}</Text>
+                )}
                 <Text style={[styles.skiLevelText, {color:whiteText}]}>Niveau de ski: Intermédiaire</Text>
 
                 <ScrollView style={styles.cardContainer}>
                     <Card style={styles.card}>
-                        <Text style={[styles.cardTitle, {color: text}]}>Informations personnelles</Text>
-                        <Text style={[styles.cardText, {color: text}]}>Nom: John</Text>
-                        <Text style={[styles.cardText, {color: text}]}>Prénom: Doe</Text>
-                        <Text style={[styles.cardText, {color: text}]}>Email: johndoe@example.com</Text>
-                        <Text style={[styles.cardText, {color: text}]}>Téléphone: +1 234 567 890</Text>
+                        {loading ? (
+                            <ActivityIndicator size="small" color="#003566" />
+                        ) : userData? (
+                            <>
+                                <Text style={[styles.cardTitle, {color: text}]}>Informations personnelles</Text>
+                                <Text style={[styles.cardText, {color: text}]}>Nom: {userData.lastname}</Text>
+                                <Text style={[styles.cardText, {color: text}]}>Prenom: {userData.firstname}</Text>
+                                <Text style={[styles.cardText, {color: text}]}>Email: {userData.email}</Text>
+                                <Text style={[styles.cardText, {color: text}]}>Téléphone: {userData.phoneNumber}</Text>
+                            </>
+                        ) : (
+                            <Text style={styles.errorText}>{error}</Text>
+                        )}
                     </Card>
 
+
                     <Card style={styles.card}>
-                        <Text style={[styles.cardTitle, {color: text}]}>Préférences de ski</Text>
-                        <Text style={[styles.cardText, {color: text}]}>Type de ski: Piste</Text>
-                        <Text style={[styles.cardText, {color: text}]}>Niveau de difficulté: Bleu</Text>
+                        {loading ? (
+                            <ActivityIndicator size="small" color="#003566" />
+                        ): userData ? (
+                            <>
+                                <Text style={[styles.cardTitle, {color: text}]}>Préférences de ski</Text>
+                                <Text style={[styles.cardText, {color: text}]}>Type de ski: {userData.skiPreference.name}</Text>
+                                <Text style={[styles.cardText, {color: text}]}>Niveau de difficulté: {userData.skiLevel.name}</Text>
+                            </>
+
+                        ):(
+                            <Text style={styles.errorText}>{error}</Text>
+                        )}
                     </Card>
                 </ScrollView>
 
@@ -124,6 +173,10 @@ const styles = StyleSheet.create({
         shadowColor: '#000',
         shadowOpacity: 0.3,
         shadowRadius: 6,
+    },
+    errorText: {
+        color: 'red',
+        textAlign: 'center',
     },
 });
 
