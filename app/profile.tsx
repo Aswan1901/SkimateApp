@@ -10,6 +10,8 @@ import apiClient from "@/api/apiClient";
 
 const UserProfileScreen = () => {
     const [userData, setUserData] = useState({user:{}});
+    const [skiPreference, setSkiPreference] = useState({user:{}});
+    const [skiLevel, setSkiLevel] = useState({user:{}});
     const [error, setError] = useState<String | null>(null);
     const [loading, setLoading] = useState(false);
 
@@ -22,7 +24,9 @@ const UserProfileScreen = () => {
             try {
                 const response = await apiClient.get('/profile');
                 setUserData(response.data.user);
-                console.log(response.data.user.skiPreference.name);
+                setSkiPreference(response.data.user.skiPreference);
+                setSkiLevel(response.data.user.skiLevel);
+                console.log(response.data.user);
             }catch(error){
                 console.log(error);
                 setError('Impossible de charger les données');
@@ -32,7 +36,6 @@ const UserProfileScreen = () => {
         };
         fetchUserInfo();
     }, []);
-
 
     return (
         <ImageBackground
@@ -78,24 +81,31 @@ const UserProfileScreen = () => {
                             <Text style={styles.errorText}>{error}</Text>
                         )}
                     </Card>
-
-
                     <Card style={styles.card}>
                         {loading ? (
                             <ActivityIndicator size="small" color="#003566" />
-                        ): userData ? (
+                        ) : (
                             <>
-                                <Text style={[styles.cardTitle, {color: text}]}>Préférences de ski</Text>
-                                <Text style={[styles.cardText, {color: text}]}>Type de ski: {userData.skiPreference.name}</Text>
-                                <Text style={[styles.cardText, {color: text}]}>Niveau de difficulté: {userData.skiLevel.name}</Text>
-                            </>
+                                {skiPreference ? (
+                                    <>
+                                        <Text style={[styles.cardTitle, { color: text }]}>Préférences de ski</Text>
+                                        <Text style={[styles.cardText, { color: text }]}>Type de ski: {skiPreference.name}</Text>
+                                    </>
+                                ) : (
+                                    <Text style={styles.errorText}>{error}</Text>
+                                )}
 
-                        ):(
-                            <Text style={styles.errorText}>{error}</Text>
+                                {skiLevel ? (
+                                    <>
+                                        <Text style={[styles.cardText, { color: text }]}>Niveau: {skiLevel.name}</Text>
+                                    </>
+                                ) : (
+                                    <Text style={styles.errorText}>{error}</Text>
+                                )}
+                            </>
                         )}
                     </Card>
                 </ScrollView>
-
                 <TouchableOpacity style={styles.settingsBtn} onPress={()=>router.push('/settings')}>
                     <Ionicons name="settings-sharp" size={30} color="#fff" />
                 </TouchableOpacity>

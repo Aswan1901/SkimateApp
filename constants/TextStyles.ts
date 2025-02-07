@@ -8,4 +8,18 @@ export const TextStyles = StyleSheet.create({
     bodyText: {
         fontSize: 12,
     },
+    errorText:{
+        textAlign: 'center',
+        marginHorizontal: 10,
+        marginVertical: 10,
+        fontWeight: 'bold',
+        fontSize:15
+    },
+    successText:{
+        textAlign: 'center',
+        marginHorizontal: 10,
+        marginVertical: 10,
+        fontWeight: 'bold',
+        fontSize:15
+    }
 });

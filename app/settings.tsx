@@ -16,27 +16,35 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from 'react-native';
 import apiClient from "@/api/apiClient";
 import {useThemeColor} from "@/hooks/useThemeColor";
-import { router } from 'expo-router';
+import { TextStyles } from '@/constants/TextStyles';
 
 
 const  SettingScreen: React.FC = () => {
 
     const [email, setEmail] = useState<string>('');
-    const [name, setName] = useState<string>('');
+    const [firstname, setFirstname] = useState<string>('');
     const [lastname, setLastname] = useState<string>('');
-    const [phoneNumber, setphoneNumber] = useState<string>('');
+    const [phonenumber, setPhonenumber] = useState<string>('');
     const [isPressed, setIsPressed] = useState<string | null>(null);
-    // const [success, setSuccess] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [skiPreference, setSkiPreference] = useState<string | null>(null);
+    const [skiLevel, setSkiLevel] = useState<string | null>(null);
+
 
     const text = useThemeColor({}, 'text');
     const whiteText = useThemeColor({}, 'whiteText');
-    const router = useRouter();
-    const handlePress=(button: string)=>{
-        setIsPressed(button);
-    }
+    const errorTextColor = useThemeColor({}, 'errorText');
+    const successTextColor = useThemeColor({}, 'successText');
 
-    const handleUpdate = async ()=>{
+    const router = useRouter();
+
+    const handlePress = (type: string, field: string) => {
+        setIsPressed(type);
+        handleUpdate(field, type);
+    };
+
+    const handleUpdate = async (field: string, value: string)=>{
         try {
             const userToken = Platform.OS === 'web' ?
                 await AsyncStorage.getItem('token') :
@@ -46,14 +54,38 @@ const  SettingScreen: React.FC = () => {
                 setError('utilisateur non trouvé')
                 return;
             }
+            if (field === 'email') {
+                const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                if (!regex.test(value)) {
+                    setError('Email invalide');
+                    return;
+                }
+            }
 
-            const response = await apiClient.put(`utilisateur/edit/${userToken}`, {
-                email: email,
-                name:name,
-                lastname: lastname,
-                phoneNumber: phoneNumber,
-            })
+            if (field === 'phonenumber'){
+                const regex = /^(\+33|0)[1-9](\d{2}){4}$/;
+                if (!regex.test(value)){
+                    setError('numéro de téléphone invalide');
+                    return;
+                }
+            }
 
+            const response = await apiClient.post(`profile/user-edit`, {
+                [field]:value,
+            });
+            if (response.status === 200) {
+
+                if (field === 'email') setEmail(value);
+                if (field === 'firstname') setFirstname(value);
+                if (field === 'lastname') setLastname(value);
+                if (field === 'phoneNumber') setPhonenumber(value);
+                if (field === 'skiPreference') setSkiPreference(value);
+                if (field === 'skiLevel') setSkiLevel(value);
+                setSuccess('Données mises à jour avec succès')
+                // console.log('Données mises à jour avec succès:', response.data);
+            } else {
+                setError('Une erreur est survenue lors de la mise à jour.');
+            }
         }catch (error){
             if (error.response && error.response.data){
                 setError(error.response.data || 'Une erreur est survenue.');
@@ -65,7 +97,6 @@ const  SettingScreen: React.FC = () => {
 
     const handleLogout = async () => {
         try {
-
             let token;
             let refreshToken;
 
@@ -102,6 +133,8 @@ const  SettingScreen: React.FC = () => {
                     <Text style={[styles.skiLevelText, {color:text}]}>
                         Niveau de ski: Intermédiaire
                     </Text>
+                    <Text style={[{ color: errorTextColor }, TextStyles.errorText]}>{error}</Text>
+                    <Text style={[{ color: successTextColor }, TextStyles.successText]}>{success}</Text>
                     <View>
                         <View style={styles.inputContainer}>
                             <TextInput
@@ -112,54 +145,66 @@ const  SettingScreen: React.FC = () => {
                                 placeholderTextColor="#000000"
                                 value={email}
                             />
-                            <TouchableOpacity><AntDesign style={styles.editBtn} name="edit"/></TouchableOpacity>
+                            <TouchableOpacity onPress={()=> handleUpdate('email', email)}>
+                                <AntDesign style={styles.editBtn} name="edit"/>
+                            </TouchableOpacity>
                         </View>
                         <View style={styles.inputContainer}>
                             <TextInput
                                 style={styles.input}
                                 placeholder="Prenom"
-                                // onChangeText={setPrenom}
+                                onChangeText={setFirstname}
                                 placeholderTextColor="#000000"
-                                value={name}
+                                value={firstname}
                             />
-                            <TouchableOpacity><AntDesign style={styles.editBtn} name="edit"/></TouchableOpacity>
+                            <TouchableOpacity onPress={()=> handleUpdate('firstname', firstname)}>
+                                <AntDesign style={styles.editBtn} name="edit"/>
+                            </TouchableOpacity>
                         </View>
                         <View style={styles.inputContainer}>
                             <TextInput
                                 style={styles.input}
                                 placeholder="Nom"
-                                // onChangeText={setNom}
+                                onChangeText={setLastname}
                                 placeholderTextColor="#000000"
-                                // value={nom}
+                                value={lastname}
                             />
-                            <TouchableOpacity><AntDesign style={styles.editBtn} name="edit"/></TouchableOpacity>
+                            <TouchableOpacity onPress={()=> handleUpdate('lastname', lastname)}>
+                                <AntDesign style={styles.editBtn} name="edit"/>
+                            </TouchableOpacity>
                         </View>
                         <View style={styles.inputContainer}>
                             <TextInput
                                 style={styles.input}
                                 placeholder="Telephone"
-                                // onChangeText={setTelephone}
+                                onChangeText={setPhonenumber}
                                 placeholderTextColor="#000000"
-                                // value={telephone}
+                                value={phonenumber}
                                 keyboardType="phone-pad"
                             />
-                            <TouchableOpacity><AntDesign style={styles.editBtn} name="edit"/></TouchableOpacity>
+                            <TouchableOpacity onPress={()=> handleUpdate('phonenumber', phonenumber)}>
+                                <AntDesign style={styles.editBtn} name="edit"/>
+                            </TouchableOpacity>
                         </View>
 
                         <View>
                             <Text style={[styles.text,{color: text}]}>Type de ski</Text>
                             <View style={styles.containerPreference}>
                                 <TouchableOpacity
-                                    style={[styles.button, isPressed === 'piste' ? styles.buttonPressed : null ]} onPress={()=>handlePress("piste")}>
-                                    <Text style={[styles.buttonText, isPressed === "piste" ? styles.buttonPressedText : null]} onPress={()=>handlePress("piste")}>Piste</Text>
+                                    style={[styles.button, isPressed === 'piste' ? styles.buttonPressed : null ]}
+                                    onPress={() => handlePress("piste", "skiPreference")}>
+                                    <Text style={[styles.buttonText, isPressed === "piste" ? styles.buttonPressedText : null]}>Piste</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    style={[styles.button2, isPressed === 'hors-piste' ? styles.buttonPressed : null ]} onPress={()=>handlePress("hors-piste")}>
-                                    <Text style={[styles.buttonText, isPressed === "hors-piste" ? styles.buttonPressedText : null]} onPress={()=>handlePress("hors-piste")}>Hors-piste</Text>
+                                    style={[styles.button2, isPressed === 'hors-piste' ? styles.buttonPressed : null ]}
+                                    onPress={() => handlePress("hors-piste", "skiPreference")}>
+                                    <Text style={[styles.buttonText, isPressed === "hors-piste" ? styles.buttonPressedText : null]}>Hors-piste</Text>
                                 </TouchableOpacity>
+
                                 <TouchableOpacity
-                                    style={[styles.button3, isPressed === 'freestyle' ? styles.buttonPressed : null ]} onPress={()=>handlePress("freestyle")}>
-                                    <Text style={[styles.buttonText, isPressed === "freestyle" ? styles.buttonPressedText : null]} onPress={()=>handlePress("freestyle")}>Freestyle</Text>
+                                    style={[styles.button3, isPressed === 'freestyle' ? styles.buttonPressed : null ]}
+                                    onPress={() => handlePress("freestyle", "skiPreference")}>
+                                    <Text style={[styles.buttonText, isPressed === "freestyle" ? styles.buttonPressedText : null]}>Freestyle</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -167,28 +212,37 @@ const  SettingScreen: React.FC = () => {
                             <Text style={[styles.text,{color: text}]}>Niveau de difficulté</Text>
                             <View style={styles.containerPreference}>
                                 <TouchableOpacity
-                                    style={[styles.button, isPressed === 'Vert' ? styles.buttonPressed : null ]} onPress={()=>handlePress("Vert")}>
-                                    <Text style={[styles.buttonText, isPressed === "Vert" ? styles.buttonPressedText : null]} onPress={()=>handlePress("Vert")}>Vert</Text>
+                                    style={[styles.button, isPressed === 'Vert' ? styles.buttonPressed : null]}
+                                    onPress={() => handlePress("Vert", "skiLevel")}>
+                                    <Text style={[styles.buttonText, isPressed === "Vert" ? styles.buttonPressedText : null]}>
+                                        Vert
+                                    </Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    style={[styles.button2, isPressed === 'Bleu' ? styles.buttonPressed : null ]} onPress={()=>handlePress("Bleu")}>
-                                    <Text style={[styles.buttonText, isPressed === "Bleu" ? styles.buttonPressedText : null]} onPress={()=>handlePress("Bleu")}>Bleu</Text>
+                                    style={[styles.button2, isPressed === 'Bleu' ? styles.buttonPressed : null]}
+                                    onPress={() => handlePress("Bleu", "skiLevel")}>
+                                    <Text style={[styles.buttonText, isPressed === "Bleu" ? styles.buttonPressedText : null]}>
+                                        Bleu
+                                    </Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    style={[styles.button2, isPressed === 'Rouge' ? styles.buttonPressed : null ]} onPress={()=>handlePress("Rouge")}>
-                                    <Text style={[styles.buttonText, isPressed === "Rouge" ? styles.buttonPressedText : null]} onPress={()=>handlePress("Rouge")}>Rouge</Text>
+                                    style={[styles.button2, isPressed === 'Rouge' ? styles.buttonPressed : null]}
+                                    onPress={() => handlePress("Rouge", "skiLevel")}>
+                                    <Text style={[styles.buttonText, isPressed === "Rouge" ? styles.buttonPressedText : null]}>
+                                        Rouge
+                                    </Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    style={[styles.button3, isPressed === 'Noir' ? styles.buttonPressed : null ]} onPress={()=>handlePress("Noir")}>
-                                    <Text style={[styles.buttonText, isPressed === "Noir" ? styles.buttonPressedText : null]} onPress={()=>handlePress("Noir")}>Noir</Text>
+                                    style={[styles.button3, isPressed === 'Noir' ? styles.buttonPressed : null]}
+                                    onPress={() => handlePress("Noir", "skiLevel")}>
+                                    <Text style={[styles.buttonText, isPressed === "Noir" ? styles.buttonPressedText : null]}>
+                                        Noir
+                                    </Text>
                                 </TouchableOpacity>
                             </View>
+
                         </View>
                        <View style={styles.btnsContainer}>
-                           {/*<SelectDropdown>*/}
-                           {/*    */}
-                           {/*</SelectDropdown>*/}
-
                            <TouchableOpacity style={styles.adminBtn}>
                                <Text style={{ color: text }} onPress={()=> router.push('/chat')}>Contacter un admin</Text>
                            </TouchableOpacity>
@@ -219,10 +273,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom:50,
-
     },
     skiLevelText: {
-        marginBottom:30,
         fontWeight: 'bold',
         fontSize: 18,
     },
