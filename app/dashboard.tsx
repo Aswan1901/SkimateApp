@@ -17,6 +17,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import {WeatherCard} from "@/components/DashboardCards/WeatherCard";
 import {CardContact} from "@/components/DashboardCards/CardContact";
 import {StationStatsCard} from "@/components/DashboardCards/StationStatsCard";
+import {ListDomainStationsCard} from "@/components/DashboardCards/ListDomainStationsCard";
 
 interface StationInfo {
     name: string;
@@ -215,6 +216,16 @@ export default function DashboardScreen() {
                         weatherTomorrow={weatherTomorrow}
                     />
                     {stationInfo && <StationStatsCard stationInfo={stationInfo} />}
+                    {stationInfo && stationInfo.domain && (
+                        <ListDomainStationsCard
+                            domain={stationInfo.domain}
+                            onSelectStation={(osmId: string) => {
+                                AsyncStorage.setItem('selected_station', osmId);
+                                setSelectedStation(osmId);
+                            }}
+                            selectedStationId={selectedStation}
+                        />
+                    )}
                     <CardContact website={stationInfo?.website} emergencyPhone={stationInfo?.emergencyPhone} />
                 </View>
             </Animated.ScrollView>
