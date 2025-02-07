@@ -5,9 +5,10 @@ import {
     StyleSheet,
     StyleProp,
     ViewStyle,
-    TextStyle, Platform
+    TextStyle, Platform, TouchableOpacity
 } from "react-native";
 import {useThemeColor} from "@/hooks/useThemeColor";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 
 type CollapsibleHeaderProps = {
@@ -27,7 +28,10 @@ type CollapsibleHeaderProps = {
     title?: string;
     /** Style additionnel pour le container */
     containerStyle?: StyleProp<ViewStyle>;
-    /** Style additionnel pour le texte */
+    /** Affiche la flèche de retour si vrai */
+    showBackButton?: boolean;
+    /** Fonction appelée lors du clic sur la flèche retour */
+    onBackPress?: () => void;
 };
 
 export default function CollapsibleHeader({
@@ -37,6 +41,8 @@ export default function CollapsibleHeader({
                                               maxFontSize = 24,
                                               minFontSize = 18,
                                               title = "Mon Titre",
+                                              showBackButton = false,
+                                              onBackPress,
                                           }: CollapsibleHeaderProps) {
     let textStyle = (useThemeColor({}, 'text'))
     let containerStyle = (useThemeColor({}, 'background'));
@@ -59,7 +65,12 @@ export default function CollapsibleHeader({
         textStyle =  "#11181C";
     }
     return (
-        <Animated.View style={[styles.header, {backgroundColor: containerStyle}, {height: headerHeight}, ]}>
+        <Animated.View style={[styles.header, {backgroundColor: containerStyle}, {height: headerHeight} ]}>
+            {showBackButton && (
+                <TouchableOpacity onPress={onBackPress} style={styles.backButton}>
+                    <Ionicons name="arrow-back" size={24} textStyle />
+                </TouchableOpacity>
+            )}
             <Animated.Text style={[styles.title, {color: textStyle}, {fontSize: titleFontSize}]}>
                 {title}
             </Animated.Text>
@@ -70,12 +81,15 @@ export default function CollapsibleHeader({
 const styles = StyleSheet.create({
     header: {
         width: "100%",
-        justifyContent: "center",
-        alignItems: "flex-start",
-        // si besoin, ajout d'élévation ou shadow
+        alignItems: "center",
+        flexDirection: "row",
     },
     title: {
         fontWeight: "bold",
         marginLeft: 25,
+    },
+    backButton: {
+        marginLeft: 10,
+        marginRight: 10,
     },
 });
