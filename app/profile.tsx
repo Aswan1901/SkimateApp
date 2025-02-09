@@ -97,9 +97,8 @@ const UserProfileScreen = () => {
         >
             <View style={styles.container}>
                 <View>
-
                     <Avatar.Image
-                        source={{uri: image || '../assets/images/profil.jpg'}}
+                        source={image ? { uri: image } : require('../assets/images/profil.png')}
                         size={100}
                         style={styles.avatar}
                     />
