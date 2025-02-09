@@ -78,7 +78,6 @@ const  SettingScreen: React.FC = () => {
                 [field]:value,
             });
             if (response.status === 200) {
-
                 if (field === 'email') setEmail(value);
                 if (field === 'firstname') setFirstname(value);
                 if (field === 'lastname') setLastname(value);
@@ -90,10 +89,12 @@ const  SettingScreen: React.FC = () => {
             } else {
                 setError('Une erreur est survenue lors de la mise à jour.');
             }
-        }catch (error){
-            if (error.response && error.response.data && error.response.data.errors){
-                setError(error.response.data || error.response.data.errors || 'Une erreur est survenue.');
-
+        }catch (error: any){
+            if (error.response) {
+                const errors = error.response.data.errors && error.response.data.errors.email;
+                if (errors) {
+                    setError(errors || 'Erreur inattendue');
+                }
             }else {
                 setError('Impossible d\'enregistré les données.')
             }
@@ -135,12 +136,13 @@ const  SettingScreen: React.FC = () => {
                 imageStyle={styles.backgroundImage}
             >
                 <View style={styles.container}>
-                    {(error || success) && (
-                        <>
-                            {error && <Text style={[{ color: errorTextColor }, TextStyles.errorText]}>{error}</Text>}
-                            {success && <Text style={[{ color: successTextColor }, TextStyles.successText]}>{success}</Text>}
-                        </>
-                    )}
+                    {!!success ? (
+                        <Text style={[{ color: successTextColor }, TextStyles.successText]}>{success}</Text>
+                    ) : !!error ? (
+                        <Text style={[{ color: errorTextColor }, TextStyles.errorText]}>{error}</Text>
+                    ) : null}
+
+
                     <View>
                         <View style={styles.inputContainer}>
                             <TextInput
@@ -246,7 +248,6 @@ const  SettingScreen: React.FC = () => {
                                     </Text>
                                 </TouchableOpacity>
                             </View>
-
                         </View>
                        <View style={styles.btnsContainer}>
                            <TouchableOpacity style={styles.adminBtn}>

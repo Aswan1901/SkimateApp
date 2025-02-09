@@ -87,13 +87,7 @@ const SignupScreen: React.FC = () => {
             }
         } catch (err: any) {
             // Gestion des erreurs axios
-            if (err.response) {
-                const errors = err.response.data.errors && err.response.data.errors.email;
-                console.log(err.response.data.errors)
-                if (errors) {
-                    setError(errors || 'Erreur inattendue');
-                }
-            }
+         "::"
             else if (err.request) {
                 console.error(err.request);
                 setError('Impossible de se connecter au serveur. Vérifiez votre connexion.');

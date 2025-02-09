@@ -101,12 +101,13 @@ const UserProfileScreen = () => {
                         source={image ? { uri: image } : require('../assets/images/profil.png')}
                         size={100}
                         style={styles.avatar}
+
                     />
                     <TouchableOpacity onPress={()=> setModalVisible(true)}>
                         <MaterialCommunityIcons
                             name="camera"
                             size={30}
-                            color='white'
+                            color='grey'
                             style={styles.photo}>
                         </MaterialCommunityIcons>
                     </TouchableOpacity>
@@ -205,9 +206,9 @@ const styles = StyleSheet.create({
         opacity: 0.5,
     },
     avatar: {
-        borderWidth: 3,
         marginBottom: 15,
         borderColor: '#fff',
+        backgroundColor:'#fff'
     },
 
     phone: {
@@ -265,7 +266,7 @@ const styles = StyleSheet.create({
     photo:{
         position: "absolute",
         top: -45,
-        right: 1,
+        right: 10,
     }
 });
 
