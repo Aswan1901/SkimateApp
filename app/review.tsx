@@ -13,6 +13,8 @@ import apiClient from "@/api/apiClient";
 import { AntDesign } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from 'expo-secure-store';
+import {TextStyles} from "@/constants/TextStyles";
+import {useThemeColor} from "@/hooks/useThemeColor";
 
 
 const ReviewScreen = () => {
@@ -23,6 +25,8 @@ const ReviewScreen = () => {
     const [newComment, setNewComment] = useState('');
     const [title, setTitle] = useState('');
     const [starRating, setStarRating] = useState(0);
+
+    const errorTextColor = useThemeColor({}, 'errorText');
 
     function showRating(starRating: number) {
         const stars = [];
@@ -45,7 +49,6 @@ const ReviewScreen = () => {
                 const response = await apiClient.get(url);
                 setComments(response.data);
             } catch (error) {
-                console.log(error);
                 setError('Impossible de charger les commentaires.');
             } finally {
                 setLoading(false);
@@ -118,7 +121,7 @@ const ReviewScreen = () => {
                         </View>
                     ))
                 ) : (
-                    <Text style={styles.errorText}>{error}</Text>
+                    <Text style={[{ color: errorTextColor }, TextStyles.errorText]}>{error}</Text>
                 )}
             </ScrollView>
             <View style={styles.leaveReviewContainer}>
@@ -260,10 +263,6 @@ const styles = StyleSheet.create({
         color: '#ffffff',
         fontSize: 16,
         fontWeight: 'bold',
-    },
-    errorText: {
-        color: 'red',
-        textAlign: 'center',
     },
     rating:{
         color:'#fcdd53',
