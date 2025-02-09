@@ -6,7 +6,10 @@ import { Ionicons } from '@expo/vector-icons';
 import {useThemeColor} from "@/hooks/useThemeColor";
 import {router} from 'expo-router';
 import apiClient from "@/api/apiClient";
-
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import * as ImagePicker from "expo-image-picker"
+import UploadImageModal from "@/components/UploadImageModal";
+import {TextStyles} from "@/constants/TextStyles";
 
 const UserProfileScreen = () => {
     const [userData, setUserData] = useState({user:{}});
@@ -14,10 +17,58 @@ const UserProfileScreen = () => {
     const [skiLevel, setSkiLevel] = useState({user:{}});
     const [error, setError] = useState<String | null>(null);
     const [loading, setLoading] = useState(false);
+    const [image, setImage] = useState(null);
+    const [modalVisible, setModalVisible] = useState(false);
 
-    const titleContainer = useThemeColor({}, 'containerHeader');
     const text = useThemeColor({}, 'text');
     const whiteText = useThemeColor({}, 'whiteText');
+    const iconsColor = useThemeColor({}, 'icon')
+
+    const requestPermissions = async () => {
+        const { status } = await ImagePicker.requestCameraPermissionsAsync();
+        if (status !== 'granted') {
+            alert("Désolé, nous avons besoin des autorisations de caméra pour que cela fonctionne!");
+        }
+    };
+
+    useEffect(() => {
+        requestPermissions();
+    }, []);
+    const uploadImage = async (option) => {
+        try {
+            let result;
+            if (option === "camera"){
+                await requestPermissions();
+
+                result = await ImagePicker.launchCameraAsync({
+                    cameraType: ImagePicker.CameraType.front,
+                    allowsEditing: true,
+                    aspect:[1,1],
+                    quality: 1,
+                });
+            }else if(option ==="gallery"){
+                result = await ImagePicker.launchImageLibraryAsync({
+                    allowsEditing: true,
+                    aspect:[1,1],
+                    quality: 1,
+                });
+            }
+            if (!result.cancelled) {
+                await saveImage(result.assets[0].uri)
+            }
+        } catch (error) {
+            alert("Error while saving image: " + error.message);
+            setModalVisible(false);
+        }
+    };
+
+    const saveImage = async(uri) => {
+        setImage(uri)
+    }
+    const removeImage = () => {
+        setImage(null);
+        setModalVisible(false);
+    };
 
     useEffect(() => {
         const fetchUserInfo = async ()=>{
@@ -42,74 +93,100 @@ const UserProfileScreen = () => {
             source={require('../assets/background/pexels-ryank-20042214.jpg')}
             style={styles.background}
             imageStyle={styles.backgroundImage}
+
         >
             <View style={styles.container}>
-                <Avatar.Image
-                    // source={{uri: ''}}
-                    size={100}
-                    style={styles.avatar}
-                />
+                <View>
+
+                    <Avatar.Image
+                        source={{uri: image || '../assets/images/profil.jpg'}}
+                        size={100}
+                        style={styles.avatar}
+                    />
+                    <TouchableOpacity onPress={()=> setModalVisible(true)}>
+                        <MaterialCommunityIcons
+                            name="camera"
+                            size={30}
+                            color='white'
+                            style={styles.photo}>
+                        </MaterialCommunityIcons>
+                    </TouchableOpacity>
+                </View>
+                <TouchableOpacity style={styles.settingsBtn} onPress={()=>router.push('/settings')}>
+                    <Ionicons name="settings-sharp" size={30} color="#fff" />
+                </TouchableOpacity>
                 {loading ? (
                     <ActivityIndicator size="small" color="#003566" />
                 ) : userData? (
                     <>
-                        <Text style={[styles.name, {color: whiteText}]}>
+                        <Text style={[TextStyles.whiteTitle, {color: whiteText}]}>
                             {userData.firstname} {userData.lastname}
-                        </Text>
-                        <Text style={[styles.email, {color: whiteText}]}>
-                            {userData.email}
                         </Text>
                     </>
                 ) : (
                     <Text style={styles.errorText}>{error}</Text>
                 )}
-                <Text style={[styles.skiLevelText, {color:whiteText}]}>Niveau de ski: Intermédiaire</Text>
 
                 <ScrollView style={styles.cardContainer}>
-                    <Card style={styles.card}>
+                    <View>
                         {loading ? (
                             <ActivityIndicator size="small" color="#003566" />
                         ) : userData? (
-                            <>
-                                <Text style={[styles.cardTitle, {color: text}]}>Informations personnelles</Text>
-                                <Text style={[styles.cardText, {color: text}]}>Nom: {userData.lastname}</Text>
-                                <Text style={[styles.cardText, {color: text}]}>Prenom: {userData.firstname}</Text>
-                                <Text style={[styles.cardText, {color: text}]}>Email: {userData.email}</Text>
-                                <Text style={[styles.cardText, {color: text}]}>Téléphone: {userData.phoneNumber}</Text>
-                            </>
+                            <View style={styles.infosContainer}>
+                                <Text style={[TextStyles.title, {color: text}]}>Informations personnelles</Text>
+                                <View style={[styles.fieldText, styles.topField]}>
+                                    <MaterialCommunityIcons name="email" size={24} style={[{color: iconsColor}]}  />
+                                    <Text style={[{color: text}]}>{userData.email}</Text>
+                                </View>
+                                <View style={[styles.fieldText, styles.bottomField]}>
+                                    <MaterialCommunityIcons name="phone" size={24} style={[{color: iconsColor}]}/>
+                                    <Text style={[{color: text}]}>{userData.phoneNumber}</Text>
+                                </View>
+
+                            </View>
                         ) : (
                             <Text style={styles.errorText}>{error}</Text>
                         )}
-                    </Card>
-                    <Card style={styles.card}>
+                    </View>
+                    <View>
                         {loading ? (
                             <ActivityIndicator size="small" color="#003566" />
-                        ) : (
-                            <>
-                                {skiPreference ? (
-                                    <>
-                                        <Text style={[styles.cardTitle, { color: text }]}>Préférences de ski</Text>
-                                        <Text style={[styles.cardText, { color: text }]}>Type de ski: {skiPreference.name}</Text>
-                                    </>
-                                ) : (
-                                    <Text style={styles.errorText}>{error}</Text>
-                                )}
+                        ) : userData? (
+                            <View style={styles.infosContainer}>
+                                <View style={styles.topField}>
+                                    {skiPreference ? (
+                                        <View style={[styles.fieldText, styles.topField]}>
+                                            <Text style={[{color: text}]}> Préference de ski</Text>
+                                            <Text style={[{color: text}]}>{skiPreference.name}</Text>
+                                        </View>
+                                    ) : (
+                                        <Text style={styles.errorText}>{error}</Text>
+                                    )}
+                                </View>
+                                <View>
+                                    {skiLevel ? (
+                                            <View style={[styles.fieldText, styles.bottomField]}>
+                                                <Text style={[{color: text}]}>Niveau de ski</Text>
+                                                <Text style={[{color: text}]}>{skiLevel.name}</Text>
+                                            </View>
+                                    ) : (
+                                        <Text style={styles.errorText}>{error}</Text>
+                                    )}
+                                </View>
 
-                                {skiLevel ? (
-                                    <>
-                                        <Text style={[styles.cardText, { color: text }]}>Niveau: {skiLevel.name}</Text>
-                                    </>
-                                ) : (
-                                    <Text style={styles.errorText}>{error}</Text>
-                                )}
-                            </>
+                            </View>
+                        ) : (
+                            <Text style={styles.errorText}>{error}</Text>
                         )}
-                    </Card>
+                    </View>
+
                 </ScrollView>
-                <TouchableOpacity style={styles.settingsBtn} onPress={()=>router.push('/settings')}>
-                    <Ionicons name="settings-sharp" size={30} color="#fff" />
-                </TouchableOpacity>
             </View>
+            <UploadImageModal
+                isVisible={modalVisible}
+                onClose={() => setModalVisible(false)}
+                onOptionSelected={uploadImage}
+            />
         </ImageBackground>
     );
 };
@@ -117,7 +194,6 @@ const UserProfileScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: 60,
@@ -131,18 +207,10 @@ const styles = StyleSheet.create({
     },
     avatar: {
         borderWidth: 3,
-        borderColor: '#fff',
         marginBottom: 15,
+        borderColor: '#fff',
     },
-    name: {
-        fontSize: 26,
-        fontWeight: '700',
-        marginTop: 10,
-    },
-    email: {
-        fontSize: 16,
-        marginTop: 5,
-    },
+
     phone: {
         fontSize: 16,
         marginTop: 5,
@@ -151,32 +219,39 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '600',
         marginTop: 20,
-        textAlign: 'center',
+        textAlign: 'right',
         marginBottom: 30,
     },
     cardContainer: {
         width: '100%',
     },
-    card: {
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        elevation: 5,
-        marginBottom: 15,
-        padding: 15,
+
+    infosContainer:{
+      marginTop: 30,
     },
-    cardTitle: {
-        fontSize: 18,
-        fontWeight: '600',
-        marginBottom: 10,
-    },
-    cardText: {
+    fieldText: {
         fontSize: 16,
-        marginBottom: 5,
+        marginBottom: 2,
+        backgroundColor:'#f2f4f7',
+        height:45,
+        flexDirection:'row',
+        justifyContent:'space-between',
+        alignItems:'center',
+        paddingRight:30,
+        paddingLeft:30,
+    },
+    topField:{
+      borderTopRightRadius:10,
+      borderTopLeftRadius:10,
+    },
+    bottomField:{
+      borderBottomRightRadius:10,
+      borderBottomLeftRadius:10,
     },
     settingsBtn: {
         position: 'absolute',
-        bottom: 20,
-        right: 20,
+        top: -40,
+        right: 25,
         backgroundColor: '#0A3A5D',
         padding: 10,
         borderRadius: 50,
@@ -188,6 +263,11 @@ const styles = StyleSheet.create({
         color: 'red',
         textAlign: 'center',
     },
+    photo:{
+        position: "absolute",
+        top: -45,
+        right: 1,
+    }
 });
 
 export default UserProfileScreen;

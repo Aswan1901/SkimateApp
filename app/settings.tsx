@@ -69,6 +69,10 @@ const  SettingScreen: React.FC = () => {
                     return;
                 }
             }
+            if (value.trim() === '') {
+                setError(`Le champ ne peut pas être vide`);
+                return;
+            }
 
             const response = await apiClient.post(`profile/user-edit`, {
                 [field]:value,
@@ -82,13 +86,14 @@ const  SettingScreen: React.FC = () => {
                 if (field === 'skiPreference') setSkiPreference(value);
                 if (field === 'skiLevel') setSkiLevel(value);
                 setSuccess('Données mises à jour avec succès')
-                // console.log('Données mises à jour avec succès:', response.data);
+
             } else {
                 setError('Une erreur est survenue lors de la mise à jour.');
             }
         }catch (error){
-            if (error.response && error.response.data){
-                setError(error.response.data || 'Une erreur est survenue.');
+            if (error.response && error.response.data && error.response.data.errors){
+                setError(error.response.data || error.response.data.errors || 'Une erreur est survenue.');
+
             }else {
                 setError('Impossible d\'enregistré les données.')
             }
@@ -130,11 +135,12 @@ const  SettingScreen: React.FC = () => {
                 imageStyle={styles.backgroundImage}
             >
                 <View style={styles.container}>
-                    <Text style={[styles.skiLevelText, {color:text}]}>
-                        Niveau de ski: Intermédiaire
-                    </Text>
-                    <Text style={[{ color: errorTextColor }, TextStyles.errorText]}>{error}</Text>
-                    <Text style={[{ color: successTextColor }, TextStyles.successText]}>{success}</Text>
+                    {(error || success) && (
+                        <>
+                            {error && <Text style={[{ color: errorTextColor }, TextStyles.errorText]}>{error}</Text>}
+                            {success && <Text style={[{ color: successTextColor }, TextStyles.successText]}>{success}</Text>}
+                        </>
+                    )}
                     <View>
                         <View style={styles.inputContainer}>
                             <TextInput
@@ -193,18 +199,18 @@ const  SettingScreen: React.FC = () => {
                                 <TouchableOpacity
                                     style={[styles.button, isPressed === 'piste' ? styles.buttonPressed : null ]}
                                     onPress={() => handlePress("piste", "skiPreference")}>
-                                    <Text style={[styles.buttonText, isPressed === "piste" ? styles.buttonPressedText : null]}>Piste</Text>
+                                    <Text style={[styles.buttonText,{color: text}, isPressed === "piste" ? styles.buttonPressedText : null]}>Piste</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.button2, isPressed === 'hors-piste' ? styles.buttonPressed : null ]}
                                     onPress={() => handlePress("hors-piste", "skiPreference")}>
-                                    <Text style={[styles.buttonText, isPressed === "hors-piste" ? styles.buttonPressedText : null]}>Hors-piste</Text>
+                                    <Text style={[styles.buttonText,{color: text}, isPressed === "hors-piste" ? styles.buttonPressedText : null]}>Hors-piste</Text>
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
                                     style={[styles.button3, isPressed === 'freestyle' ? styles.buttonPressed : null ]}
                                     onPress={() => handlePress("freestyle", "skiPreference")}>
-                                    <Text style={[styles.buttonText, isPressed === "freestyle" ? styles.buttonPressedText : null]}>Freestyle</Text>
+                                    <Text style={[styles.buttonText,{color: text}, isPressed === "freestyle" ? styles.buttonPressedText : null]}>Freestyle</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -214,28 +220,28 @@ const  SettingScreen: React.FC = () => {
                                 <TouchableOpacity
                                     style={[styles.button, isPressed === 'Vert' ? styles.buttonPressed : null]}
                                     onPress={() => handlePress("Vert", "skiLevel")}>
-                                    <Text style={[styles.buttonText, isPressed === "Vert" ? styles.buttonPressedText : null]}>
+                                    <Text style={[styles.buttonText, {color: text}, isPressed === "Vert" ? styles.buttonPressedText : null]}>
                                         Vert
                                     </Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.button2, isPressed === 'Bleu' ? styles.buttonPressed : null]}
                                     onPress={() => handlePress("Bleu", "skiLevel")}>
-                                    <Text style={[styles.buttonText, isPressed === "Bleu" ? styles.buttonPressedText : null]}>
+                                    <Text style={[styles.buttonText,{color: text}, isPressed === "Bleu" ? styles.buttonPressedText : null]}>
                                         Bleu
                                     </Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.button2, isPressed === 'Rouge' ? styles.buttonPressed : null]}
                                     onPress={() => handlePress("Rouge", "skiLevel")}>
-                                    <Text style={[styles.buttonText, isPressed === "Rouge" ? styles.buttonPressedText : null]}>
+                                    <Text style={[styles.buttonText, {color: text},isPressed === "Rouge" ? styles.buttonPressedText : null]}>
                                         Rouge
                                     </Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.button3, isPressed === 'Noir' ? styles.buttonPressed : null]}
                                     onPress={() => handlePress("Noir", "skiLevel")}>
-                                    <Text style={[styles.buttonText, isPressed === "Noir" ? styles.buttonPressedText : null]}>
+                                    <Text style={[styles.buttonText,{color: text}, isPressed === "Noir" ? styles.buttonPressedText : null]}>
                                         Noir
                                     </Text>
                                 </TouchableOpacity>
@@ -273,10 +279,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom:50,
-    },
-    skiLevelText: {
-        fontWeight: 'bold',
-        fontSize: 18,
     },
     inputContainer: {
         marginBottom: 20,

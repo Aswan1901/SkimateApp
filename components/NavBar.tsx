@@ -48,16 +48,16 @@ const NavBar: React.FC<NavBarProps> = () => {
             // ou MaterialCommunityIcons "speedometer" si tu préfères
         },
         {
-            href: '/profile',
-            label: 'profil',
-            icon: Ionicons,
-            iconName: 'person',
-        },
-        {
             href: '/resort',
             label: 'Resort',
             icon: FontAwesome6,
             iconName: 'mountain',
+        },
+        {
+            href: '/profile',
+            label: 'profil',
+            icon: Ionicons,
+            iconName: 'person',
         },
     ];
 

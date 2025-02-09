@@ -88,7 +88,7 @@ const SignupScreen: React.FC = () => {
         } catch (err: any) {
             // Gestion des erreurs axios
             if (err.response) {
-                const errors = err.response.data.errors || err.response.data.errors.email;
+                const errors = err.response.data.errors && err.response.data.errors.email;
                 console.log(err.response.data.errors)
                 if (errors) {
                     setError(errors || 'Erreur inattendue');

@@ -19,5 +19,15 @@ export const TextStyles = StyleSheet.create({
         marginHorizontal: 10,
         marginVertical: 10,
         fontSize:15
-    }
+    },
+    whiteTitle: {
+        fontSize: 26,
+        fontWeight: '700',
+        marginTop: 10,
+    },
+    title: {
+        fontSize:15,
+        fontWeight: '600',
+        marginBottom: 10,
+    },
 });
