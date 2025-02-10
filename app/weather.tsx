@@ -5,6 +5,8 @@ import Feather from '@expo/vector-icons/Feather';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import {TextStyles} from "@/constants/TextStyles";
+import {useThemeColor} from "@/hooks/useThemeColor";
 
 const { width } = Dimensions.get('window');
 
@@ -17,6 +19,8 @@ const WeatherScreen: React.FC = () => {
     const currentDay = new Date().toISOString().split('T')[0]
     const currentHours = new Date().getHours()
     const isMorning = currentHours <=  12;
+
+    const errorTextColor = useThemeColor({}, 'errorText');
 
     const getWeatherIcon = (weather: string) => {
         switch (weather.toLowerCase()) {
@@ -147,7 +151,7 @@ const WeatherScreen: React.FC = () => {
                     ) : loading ? (
                         <ActivityIndicator size="small" color="#003566" />
                     ) : (
-                        <Text style={styles.errorText}>{error}</Text>
+                        <Text style={[{ color: errorTextColor }, TextStyles.errorText]}>{error}</Text>
                     )}
                 </View>
                 <View style={styles.forecastCard}>
@@ -174,7 +178,7 @@ const WeatherScreen: React.FC = () => {
                     ) : loading ? (
                         <ActivityIndicator size="small" color="#003566" />
                     ) : (
-                        <Text style={styles.errorText}>{error}</Text>
+                        <Text style={[{ color: errorTextColor }, TextStyles.errorText]}>{error}</Text>
                     )}
                 </View>
             </View>
@@ -285,10 +289,6 @@ const styles = StyleSheet.create({
     },
     snowFallText: {
         fontSize: 14,
-    },
-    errorText: {
-        color: 'red',
-        textAlign: 'center',
     },
     weatherDescription: {
         textAlign: 'center',
