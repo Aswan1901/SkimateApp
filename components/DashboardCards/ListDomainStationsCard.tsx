@@ -32,8 +32,6 @@ export function ListDomainStationsCard({ domain, onSelectStation, selectedStatio
         })();
     }, [domain, selectedStationId]);
 
-    console.log(stations);
-
     return (
         <Card style={[styles.cardContainer, { backgroundColor: cardBg }]}>
             <Text style={[styles.cardTitle, { color: textColor }, TextStyles.cardTitle]}>
