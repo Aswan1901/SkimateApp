@@ -5,7 +5,7 @@ import {
     View,
     Text,
     TextInput,
-    TouchableOpacity
+    TouchableOpacity, ImageSourcePropType
 } from "react-native";
 import {useThemeColor} from "@/hooks/useThemeColor";
 import CollapsibleHeader from "../components/CollapsibleHeader";
@@ -17,6 +17,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import {WeatherCard} from "@/components/DashboardCards/WeatherCard";
 import {CardContact} from "@/components/DashboardCards/CardContact";
 import {StationStatsCard} from "@/components/DashboardCards/StationStatsCard";
+import {ListDomainStationsCard} from "@/components/DashboardCards/ListDomainStationsCard";
+import {StationListItem} from "@/components/StationListItem";
 
 interface StationInfo {
     name: string;
@@ -30,6 +32,7 @@ interface StationInfo {
     countIntermediate?: number | null;
     countAdvanced?: number | null;
     countExpert?: number | null;
+    logo?: ImageSourcePropType | null;
 }
 
 export default function DashboardScreen() {
@@ -156,15 +159,12 @@ export default function DashboardScreen() {
                             {searchResults.length > 0 && (
                                 <View style={[styles.resultsContainer, {backgroundColor: backgroundColorCard}]}>
                                     {searchResults.map((station) => (
-                                        <TouchableOpacity
+                                        <StationListItem
                                             key={station.osmId}
-                                            style={styles.resultItem}
+                                            logo={station.logo || null}
+                                            text={station.name}
                                             onPress={() => handleSelectStation(station.osmId)}
-                                        >
-                                            <Text style={[styles.resultItemText, {color: textColor}]}>
-                                                {station.name}
-                                            </Text>
-                                        </TouchableOpacity>
+                                        />
                                     ))}
                                 </View>
                             )}
@@ -185,7 +185,7 @@ export default function DashboardScreen() {
     // -- Sinon, si on a une station => on affiche la version "header collapsant" + cards
     return (
         <View style={[styles.container, {backgroundColor}]}>
-            <CollapsibleHeader scrollY={scrollY} title={stationInfo?.name} showBackButton={true} onBackPress={handleReset}/>
+            <CollapsibleHeader scrollY={scrollY} title={stationInfo?.name} showBackButton={true} onBackPress={handleReset} logo={stationInfo?.logo}/>
             <Animated.ScrollView
                 contentContainerStyle={styles.scrollContent}
                 onScroll={Animated.event(
@@ -215,6 +215,16 @@ export default function DashboardScreen() {
                         weatherTomorrow={weatherTomorrow}
                     />
                     {stationInfo && <StationStatsCard stationInfo={stationInfo} />}
+                    {stationInfo && stationInfo.domain && (
+                        <ListDomainStationsCard
+                            domain={stationInfo.domain}
+                            onSelectStation={(osmId: string) => {
+                                AsyncStorage.setItem('selected_station', osmId);
+                                setSelectedStation(osmId);
+                            }}
+                            selectedStationId={selectedStation}
+                        />
+                    )}
                     <CardContact website={stationInfo?.website} emergencyPhone={stationInfo?.emergencyPhone} />
                 </View>
             </Animated.ScrollView>

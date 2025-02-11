@@ -11,7 +11,7 @@ export const Colors = {
     text: '#11181C',
     whiteText: '#fff',
     containerHeader: '#0A3A5D',
-    background: '#f2f4f7',    // Gris/bleu clair pour un look plus "moderne" qu'un blanc pur
+    background: '#e1e9f4',    // Gris/bleu clair pour un look plus "moderne" qu'un blanc pur
     tint: tintColorLight,     // Couleur d'accent primaire (ex: pour les boutons, liens, icônes sélectionnées)
     icon: '#687076',        // Couleur d'icônes par défaut
     tabIconDefault: '#687076',

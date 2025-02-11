@@ -155,8 +155,8 @@ export function StationStatsCard({ stationInfo }: StationStatsCardProps) {
                 {difficultyItems.map((item, index) => (
                     <View key={index} style={styles.difficultyItem}>
                         <Ionicons name={item.icon} size={16} color={item.color} style={styles.difficultyIcon} />
-                        <Text style={[styles.difficultyLabel, { color: textColor }]}>{item.label}</Text>
-                        <Text style={[styles.difficultyCount, { color: item.color }]}>{item.count}</Text>
+                        <Text style={[styles.difficultyLabel, { color: textColor }, TextStyles.bodyText]}>{item.label}</Text>
+                        <Text style={[styles.difficultyCount, { color: item.color }, TextStyles.bodyText]}>{item.count}</Text>
                     </View>
                 ))}
                 <View style={styles.difficultyItem}>
@@ -248,10 +248,8 @@ const styles = StyleSheet.create({
     },
     difficultyLabel: {
         flex: 1,
-        fontSize: 12,
     },
     difficultyCount: {
-        fontSize: 12,
         fontWeight: 'bold',
     },
 });

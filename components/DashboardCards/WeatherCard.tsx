@@ -133,7 +133,7 @@ export function WeatherCard({ weatherToday, weatherTomorrow }: WeatherCardProps)
                         {!!currentWeather.afternoon.snowfall && currentWeather.afternoon.snowfall > 0 && (
                             <View style={styles.infoRow}>
                                 <Image source={iconNeige} style={styles.miniIcon} resizeMode="contain" />
-                                <Text style={[[styles.infoText, TextStyles.bodyText], TextStyles.bodyText]}>
+                                <Text style={[styles.infoText, TextStyles.bodyText]}>
                                     {currentWeather.afternoon.snowfall} cm
                                 </Text>
                             </View>

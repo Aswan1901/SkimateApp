@@ -14,11 +14,10 @@ const apiClient: AxiosInstance = axios.create({
     baseURL: `${API_URL}/api`,
     timeout: 10000,
 });
-
+export { API_URL };
 // Flag pour éviter les boucles infinies
 let isRefreshing = false;
 let failedQueue: any[] = [];
-
 const refreshToken = async () => {
     let refresh_token :string  | null = null;
 

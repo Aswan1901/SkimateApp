@@ -17,7 +17,8 @@ export default {
       adaptiveIcon: {
         foregroundImage: "./assets/images/adaptive-icon.png",
         backgroundColor: "#ffffff"
-      }
+      },
+      package: "com.mathieu.skimate"
     },
     web: {
       bundler: "metro",
@@ -36,7 +37,7 @@ export default {
         }
       ],
       [
-          "expo-secure-store"
+        "expo-secure-store"
       ]
 
     ],
@@ -44,7 +45,10 @@ export default {
       typedRoutes: true
     },
     extra: {
-      apiUrl: process.env.API_URL
+      apiUrl: process.env.API_URL,
+      eas: {
+        "projectId": "5642594b-cf85-4c67-ada9-332ab7736d16"
+      }
     }
   }
 };
