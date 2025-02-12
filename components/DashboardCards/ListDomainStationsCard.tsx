@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Text, StyleSheet, TouchableOpacity } from 'react-native';
+import {Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import { Card } from '@/components/Card';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import apiClient from '@/api/apiClient';
+import apiClient, {API_URL} from '@/api/apiClient';
 import {TextStyles} from "@/constants/TextStyles";
 
 export type ListDomainStationsCardProps = {
@@ -23,7 +23,6 @@ export function ListDomainStationsCard({ domain, onSelectStation, selectedStatio
                 const response = await apiClient.get('/stations', {
                     params: { domain },
                 });
-                // On suppose que l'API renvoie un tableau d'objets station avec au moins { osmId, name }
                 const filteredStations = response.data.filter((station: any) => station.osmId !== selectedStationId);
                 setStations(filteredStations);
             } catch (error) {
@@ -43,6 +42,7 @@ export function ListDomainStationsCard({ domain, onSelectStation, selectedStatio
                     style={styles.stationRow}
                     onPress={() => onSelectStation(station.osmId)}
                 >
+                    {station.logo && <Image source={{ uri: API_URL + station.logo }} style={styles.logo} resizeMode="contain" />}
                     <Text style={[styles.stationName, { color: textColor }]}>
                         {station.name}
                     </Text>
@@ -66,8 +66,15 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
+        flexDirection: 'row'
     },
     stationName: {
         fontSize: 16,
+        width: '93%',
+    },
+    logo: {
+        width: 30,
+        height: 30,
+        marginRight: 8,
     },
 });

@@ -132,7 +132,7 @@ const WeatherScreen: React.FC = () => {
                                     <Text style={styles.snowfallInfoText}>Chute</Text>
                                 </View>
                                 <View>
-                                    <Text style={styles.cardTextSnow}>{today.afternoon.snow_depth || 0}cm</Text>
+                                    <Text style={styles.cardTextSnow}>{today.afternoon.snow_depth*100 || 0}cm</Text>
                                     <Text style={styles.snowfallInfoText || 0}>Profondeur</Text>
                                 </View>
                             </View>
@@ -143,7 +143,7 @@ const WeatherScreen: React.FC = () => {
                                     <Text style={styles.snowfallInfoText}>Chute</Text>
                                 </View>
                                 <View>
-                                    <Text style={styles.cardTextSnow}>{today.afternoon.snow_depth || 0}cm</Text>
+                                    <Text style={styles.cardTextSnow}>{today.afternoon.snow_depth*100 || 0}cm</Text>
                                     <Text style={styles.snowfallInfoText}>Profondeur</Text>
                                 </View>
                             </View>
