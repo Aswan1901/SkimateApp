@@ -41,15 +41,7 @@ const NavBar: React.FC<NavBarProps> = () => {
         },
         {
             href: '/dashboard',
-            label: 'Dashboard',
-            icon: Ionicons,
-            iconName: 'grid-outline',
-            // ou "speedometer" si Ionicons le propose,
-            // ou MaterialCommunityIcons "speedometer" si tu préfères
-        },
-        {
-            href: '/resort',
-            label: 'Resort',
+            label: 'Stations',
             icon: FontAwesome6,
             iconName: 'mountain',
         },
