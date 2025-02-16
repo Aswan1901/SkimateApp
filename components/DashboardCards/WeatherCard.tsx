@@ -89,7 +89,7 @@ export function WeatherCard({ weatherToday, weatherTomorrow }: WeatherCardProps)
                             {/* profondeur de neige */}
                             <Image source={iconFlocon} style={styles.miniIcon} resizeMode="contain" />
                             <Text style={[styles.infoText, TextStyles.bodyText]}>
-                                {currentWeather.morning.snow_depth} cm
+                                {Math.round(currentWeather.morning.snow_depth*100)} cm
                             </Text>
                         </View>
 
@@ -127,7 +127,7 @@ export function WeatherCard({ weatherToday, weatherTomorrow }: WeatherCardProps)
                         <View style={styles.infoRow}>
                             <Image source={iconFlocon} style={styles.miniIcon} resizeMode="contain" />
                             <Text style={[styles.infoText, TextStyles.bodyText]}>
-                                {currentWeather.afternoon.snow_depth} cm
+                                {Math.round(currentWeather.afternoon.snow_depth*100)} cm
                             </Text>
                         </View>
                         {!!currentWeather.afternoon.snowfall && currentWeather.afternoon.snowfall > 0 && (

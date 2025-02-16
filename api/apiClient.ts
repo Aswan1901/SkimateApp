@@ -14,6 +14,7 @@ const apiClient: AxiosInstance = axios.create({
     baseURL: `${API_URL}/api`,
     timeout: 10000,
 });
+//console.log(API_URL);
 export { API_URL };
 // Flag pour éviter les boucles infinies
 let isRefreshing = false;
