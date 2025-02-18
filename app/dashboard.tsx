@@ -19,6 +19,7 @@ import {CardContact} from "@/components/DashboardCards/CardContact";
 import {StationStatsCard} from "@/components/DashboardCards/StationStatsCard";
 import {ListDomainStationsCard} from "@/components/DashboardCards/ListDomainStationsCard";
 import {StationListItem} from "@/components/StationListItem";
+import CommentCard from "@/components/DashboardCards/CommentCard";
 
 interface StationInfo {
     name: string;
@@ -225,6 +226,8 @@ export default function DashboardScreen() {
                             selectedStationId={selectedStation}
                         />
                     )}
+
+                    <CommentCard osmId={selectedStation} />
                     <CardContact website={stationInfo?.website} emergencyPhone={stationInfo?.emergencyPhone} />
                 </View>
             </Animated.ScrollView>
