@@ -14,13 +14,18 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import { useRouter } from 'expo-router';
 import apiClient, {isUserConnected} from '@/api/apiClient';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import {TextStyles} from "@/constants/TextStyles";
 
 export type Comment = {
     id: string;
     title: string;
     description: string;
-    rating: number;
-    createdAt: string;
+    note: number;
+    createdAt: {
+        date: string;
+        timezone_type: number;
+        timezone: string;
+    };
     firstName: string;
     lastName: string;
 };
@@ -61,18 +66,19 @@ export function CommentsSection({ osmId }: CommentsSectionProps) {
 
     // Récupération des commentaires via POST /comments
     useEffect(() => {
-        const fetchComments = async () => {
-            try {
-                const response = await apiClient.post('/comments', { osmId });
-                setComments(response.data);
-            } catch (error) {
-                setErrorComments("Erreur lors du chargement des commentaires.");
-            } finally {
-                setLoadingComments(false);
-            }
-        };
         fetchComments();
     }, [osmId]);
+
+    const fetchComments = async () => {
+        try {
+            const response = await apiClient.post('/comments', { osmId });
+            setComments(response.data);
+        } catch (error) {
+            setErrorComments("Erreur lors du chargement des commentaires.");
+        } finally {
+            setLoadingComments(false);
+        }
+    };
 
     // Fonction pour soumettre un nouveau commentaire via POST /comment/add
     const handleSubmitComment = async () => {
@@ -80,17 +86,16 @@ export function CommentsSection({ osmId }: CommentsSectionProps) {
         setSubmitting(true);
         try {
             // Remplacez cet appel par votre appel réel à l'API
-            const response = await apiClient.post('/comment/add', {
+            await apiClient.post('/comment/add', {
                 osmId,
                 title: commentTitle,
                 description: commentDescription,
                 note: commentRating,
             });
-            // Ajoutez le nouveau commentaire au début de la liste
-            setComments(prev => [response.data, ...prev]);
             setCommentTitle('');
             setCommentDescription('');
             setCommentRating(0);
+            await fetchComments();
         } catch (error) {
             console.warn("Erreur lors de la soumission du commentaire", error);
         } finally {
@@ -102,31 +107,53 @@ export function CommentsSection({ osmId }: CommentsSectionProps) {
         <Card style={[styles.cardContainer, { backgroundColor: cardBg }]}>
             <Text style={[styles.cardTitle, { color: textColor }]}>Commentaires</Text>
 
-            {/* Liste horizontale des commentaires */}
             {loadingComments ? (
                 <ActivityIndicator size="small" color="#0a7ea4" />
             ) : errorComments ? (
                 <Text style={[styles.errorText, { color: textColor }]}>{errorComments}</Text>
+            ) : comments.length === 0 ? (
+                <Text style={[styles.noCommentsText, { color: textColor }]}>
+                    Aucun commentaire pour le moment.
+                </Text>
             ) : (
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.commentsList}>
                     {comments.map(comment => (
                         <TouchableOpacity key={comment.id} style={styles.commentCard}>
-                            <View style={styles.commentHeader}>
-                                <Text style={[styles.commentRating, { color: '#FFD700' }]}>
-                                    {comment.rating}{' '}
-                                    <Ionicons name="star" size={14} color="#FFD700" />
-                                </Text>
-                                <Text style={[styles.commentTitle, { color: textColor }]} numberOfLines={1}>
-                                    {comment.title}
+                            <View style={styles.headerComment}>
+                                <Text style={[styles.commentTitle, { color: textColor }]}>{comment.title}</Text>
+                                <Text style={[styles.commentAuthor, TextStyles.bodyText, { color: textColor }]}>
+                                    {comment.lastName + " " + comment.firstName}
                                 </Text>
                             </View>
-                            <Text style={[styles.commentDescription, { color: textColor }]} numberOfLines={3}>
-                                {comment.description}
-                            </Text>
+                            <View style={styles.starsRow}>
+                                {Array.from({ length: 5 }).map((_, index) => {
+                                    const starNumber = index + 1;
+                                    return (
+                                        <Ionicons
+                                            key={index}
+                                            name={starNumber <= comment.note ? 'star' : 'star-outline'}
+                                            size={16}
+                                            color={starNumber <= comment.note ? '#FFD700' : '#ccc'}
+                                        />
+                                    );
+                                })}
+                                <Text style={[TextStyles.bodyText, { color: textColor }]}>
+                                    {comment.note}/5
+                                </Text>
+                                <Text style={[styles.commentDate, TextStyles.bodyText, { color: textColor }]}>
+                                    {new Date(comment.createdAt.date.replace(' ', 'T')).toLocaleDateString('fr-FR', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: '2-digit',
+                                    })}
+                                </Text>
+                            </View>
+                            <Text style={[styles.commentDescription, { color: textColor }]}>{comment.description}</Text>
                         </TouchableOpacity>
                     ))}
                 </ScrollView>
             )}
+
 
             {/* Séparateur */}
             <View style={styles.divider} />
@@ -205,38 +232,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 10,
     },
-    errorText: {
-        fontSize: 14,
-        textAlign: 'center',
-    },
-    commentsList: {
-        flexDirection: 'row',
-        marginVertical: 10,
-    },
-    commentCard: {
-        width: 220,
-        padding: 10,
-        marginRight: 10,
-        borderRadius: 10,
-        backgroundColor: '#f2f4f7',
-    },
-    commentHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 5,
-    },
     commentRating: {
         fontSize: 14,
         fontWeight: 'bold',
         marginRight: 5,
-    },
-    commentTitle: {
-        fontSize: 14,
-        fontWeight: '600',
-        flex: 1,
-    },
-    commentDescription: {
-        fontSize: 13,
     },
     divider: {
         height: 1,
@@ -290,6 +289,59 @@ const styles = StyleSheet.create({
         color: '#0a7ea4',
         textDecorationLine: 'underline',
     },
+    commentsList: {
+        marginVertical: 10,
+    },
+    noCommentsText: {
+        fontSize: 16,
+        textAlign: 'center',
+        marginVertical: 10,
+    },
+    errorText: {
+        fontSize: 14,
+        textAlign: 'center',
+    },
+    commentCard: {
+        width: 300,
+        backgroundColor: '#f2f4f7',
+        borderRadius: 10,
+        padding: 10,
+        marginRight: 10,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+    },
+    author: {
+        marginBottom: 4,
+    },
+    commentTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        width: '55%'
+    },
+    starsRow: {
+        flexDirection: 'row',
+        marginBottom: 20,
+    },
+    commentDescription: {
+        fontSize: 13,
+    },
+    headerComment: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start', // alignement en haut
+        width: '100%',
+        overflow: 'hidden'
+    },
+    commentAuthor:{
+        flexWrap: 'wrap',
+    },
+    commentDate: {
+        marginLeft: 10,
+    }
 });
 
 export default CommentsSection;
