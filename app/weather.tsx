@@ -112,7 +112,7 @@ const WeatherScreen: React.FC = () => {
     }
 
     const handleBack = () => {
-        router.replace("/dashboard")
+        router.replace("/dashboard");
     }
 
     return (

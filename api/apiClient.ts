@@ -20,7 +20,7 @@ export { API_URL };
 let isRefreshing = false;
 let failedQueue: any[] = [];
 const refreshToken = async () => {
-    let refresh_token :string  | null = null;
+    let refresh_token :string  | null;
 
     if (Platform.OS === 'web') {
         refresh_token = await AsyncStorage.getItem('refresh_token');
@@ -108,7 +108,7 @@ apiClient.interceptors.response.use(
                     await SecureStore.deleteItemAsync('token');
                     await SecureStore.deleteItemAsync('refresh_token');
                 }
-                router.replace('/login'); // Redirige vers la page de Login
+                router.replace('/login');
 
                 return Promise.reject(refreshError);
             }
@@ -116,5 +116,47 @@ apiClient.interceptors.response.use(
         return Promise.reject(error);
     }
 );
+
+export async function isUserConnected(): Promise<boolean> {
+    let token: string | null;
+    let refresh_token: string | null;
+
+    if (Platform.OS === 'web') {
+        token = await AsyncStorage.getItem('token');
+        refresh_token = await AsyncStorage.getItem('refresh_token');
+    } else {
+        token = await SecureStore.getItemAsync('token');
+        refresh_token = await SecureStore.getItemAsync('refresh_token');
+    }
+
+    // Si un token existe, on le teste via un endpoint protégé (par exemple /api/profile)
+    if (token) {
+        try {
+            await axios.get(`${API_URL}/api/profile`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            // Si la requête réussit, le token est valide
+            return true;
+        } catch (error) {
+            console.warn('Token invalide, tentative de rafraîchissement...');
+        }
+    }
+
+    // Si aucun refresh token n'est trouvé, l'utilisateur n'est pas connecté
+    if (!refresh_token) return false;
+
+    try {
+        // Test du refresh token
+        const response = await axios.post(`${API_URL}/api/token/refresh`, { refresh_token });
+        if (Platform.OS === 'web') {
+            await AsyncStorage.setItem('token', response.data.token);
+        } else {
+            await SecureStore.setItemAsync('token', response.data.token);
+        }
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
 
 export default apiClient;
