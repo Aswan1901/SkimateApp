@@ -55,6 +55,10 @@ export function CommentsSection({ osmId }: CommentsSectionProps) {
     const cardBg = useThemeColor({}, 'card');
     const router = useRouter();
 
+    //système de trie
+    const [sortMethod, setSortMethod] = useState<'date' | 'note'>('date');
+    const [originalComments, setOriginalComments] = useState<Comment[]>([]);
+
     // Vérifier la connexion en cherchant un token
     useEffect(() => {
         const checkConnection = async () => {
@@ -69,10 +73,26 @@ export function CommentsSection({ osmId }: CommentsSectionProps) {
         fetchComments();
     }, [osmId]);
 
+
+    useEffect(() => {
+        let sorted = [...originalComments];
+        if (sortMethod === 'date') {
+            sorted.sort((a, b) => {
+                const dateA = new Date(a.createdAt.date.replace(' ', 'T')).getTime();
+                const dateB = new Date(b.createdAt.date.replace(' ', 'T')).getTime();
+                return dateB - dateA;
+            });
+        } else if (sortMethod === 'note') {
+            sorted.sort((a, b) => b.note - a.note);
+        }
+        setComments(sorted);
+    }, [sortMethod, originalComments]);
+
     const fetchComments = async () => {
         try {
             const response = await apiClient.post('/comments', { osmId });
             setComments(response.data);
+            setOriginalComments(response.data);
         } catch (error) {
             setErrorComments("Erreur lors du chargement des commentaires.");
         } finally {
@@ -103,9 +123,80 @@ export function CommentsSection({ osmId }: CommentsSectionProps) {
         }
     };
 
+    // Calcul de la note moyenne
+    const totalRatings = comments.reduce((sum, comment) => sum + comment.note, 0);
+    const averageRating = comments.length ? totalRatings / comments.length : 0;
+
+// Calcul du nombre de commentaires pour chaque note (de 1 à 5)
+    const ratingCounts = [1,2,3,4,5].reduce((acc, rating) => {
+        acc[rating] = comments.filter(comment => comment.note === rating).length;
+        return acc;
+    }, {} as { [key: number]: number });
+
+// Fonction pour obtenir le pourcentage d'une note
+    const getRatingPercentage = (rating: number) => {
+        return comments.length ? (ratingCounts[rating] / comments.length) * 100 : 0;
+    };
+
+// Fonction pour afficher les étoiles de la moyenne (gestion du demi-étoile)
+    const renderStars = (rating: number) => {
+        const stars = [];
+        for (let i = 1; i <= 5; i++) {
+            if (i <= Math.floor(rating)) {
+                stars.push(<Ionicons key={i} name="star" size={16} color="#FFD700" />);
+            } else if (i === Math.floor(rating) + 1 && rating % 1 >= 0.5) {
+                stars.push(<Ionicons key={i} name="star-half" size={16} color="#FFD700" />);
+            } else {
+                stars.push(<Ionicons key={i} name="star-outline" size={16} color="#ccc" />);
+            }
+        }
+        return <View style={{ flexDirection: 'row' }}>{stars}</View>;
+    };
+
     return (
         <Card style={[styles.cardContainer, { backgroundColor: cardBg }]}>
             <Text style={[styles.cardTitle, { color: textColor }]}>Commentaires</Text>
+
+            {/* Section d'évaluation globale */}
+            <View style={styles.overallRatingContainer}>
+                <View style={styles.overallLeft}>
+                    <Text style={[styles.averageRating, { color: textColor }]}>{averageRating.toFixed(1)}</Text>
+                    <View style={styles.averageStars}>
+                        {renderStars(averageRating)}
+                    </View>
+                    <View style={styles.commentCountContainer}>
+                        <Text style={[styles.commentCountText, { color: textColor }]}>
+                            {comments.length}
+                        </Text>
+                        <Ionicons name="person" size={16} color={textColor} />
+                    </View>
+                </View>
+                <View style={styles.overallRight}>
+                    {[5,4,3,2,1].map(rating => (
+                        <View key={rating} style={styles.ratingRow}>
+                            <Text style={[styles.ratingLabel, { color: textColor }]}>{rating}</Text>
+                            <View style={styles.ratingBarContainer}>
+                                <View
+                                    style={[
+                                        styles.ratingBarFill,
+                                        { width: `${getRatingPercentage(rating)}%`, backgroundColor: '#0a7ea4' },
+                                    ]}
+                                />
+                            </View>
+                        </View>
+                    ))}
+                </View>
+            </View>
+            <View style={styles.divider} />
+
+            <View style={styles.sortContainer}>
+                <TouchableOpacity onPress={() => setSortMethod('date')}>
+                    <Ionicons name="calendar" size={20} color={sortMethod === 'date' ? '#0a7ea4' : textColor} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setSortMethod('note')}>
+                    <Ionicons name="star" size={20} color={sortMethod === 'note' ? '#0a7ea4' : textColor} />
+                </TouchableOpacity>
+            </View>
 
             {loadingComments ? (
                 <ActivityIndicator size="small" color="#0a7ea4" />
@@ -341,7 +432,64 @@ const styles = StyleSheet.create({
     },
     commentDate: {
         marginLeft: 10,
-    }
+    },
+    sortContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    overallRatingContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 15,
+        marginTop: 15,
+    },
+    overallLeft: {
+        flex: 1,
+        alignItems: 'center',
+    },
+    averageRating: {
+        fontSize: 32,
+        fontWeight: 'bold',
+    },
+    averageStars: {
+        flexDirection: 'row',
+        marginVertical: 5,
+    },
+    commentCountContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    commentCountText: {
+        fontSize: 14,
+        marginLeft: 4,
+    },
+    overallRight: {
+        flex: 1,
+        justifyContent: 'center',
+    },
+    ratingRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 3,
+    },
+    ratingLabel: {
+        width: 20,
+        fontSize: 14,
+    },
+    ratingBarContainer: {
+        flex: 1,
+        height: 6,
+        backgroundColor: '#eee',
+        borderRadius: 3,
+        overflow: 'hidden',
+        marginLeft: 5,
+    },
+    ratingBarFill: {
+        height: '100%',
+        borderRadius: 3,
+    },
 });
 
 export default CommentsSection;
